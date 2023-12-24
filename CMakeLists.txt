@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10.2)
-project(glEngine)
+project(nebula_main)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
@@ -9,6 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(src)
 
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} engine)
+target_link_libraries(${PROJECT_NAME} PRIVATE nebula)
 
 
