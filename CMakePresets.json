@@ -1,0 +1,40 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 22,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "windows-conf-vcpkg",
+            "displayName": "Windows Configuration",
+            "description": "Build project using vcpkg and MinGW",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/default",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": {
+                    "type": "FILEPATH",
+                    "value": "vcpkg/scripts/buildsystems/vcpkg.cmake"
+                },
+                "VCPKG_TARGET_TRIPLET": {
+                    "value": "x64-mingw-static"
+                }
+            }
+        }
+    ],
+  "buildPresets": [
+    {
+      "name": "windows-conf-vcpkg - Debug",
+      "configurePreset": "windows-conf-vcpkg",
+      "targets": "glEngine",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-conf-vcpkg - Release",
+      "configurePreset": "windows-conf-vcpkg",
+      "targets": "glEngine",
+      "configuration": "Release"
+    }
+  ]
+}

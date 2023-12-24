@@ -1,0 +1,17 @@
+{
+  "name" : "pico2d",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "a429a35bb5d9467aa8d22ca00e747445eb893414",
+  "dependencies" : [ 
+	  {
+		"name" : "glad",
+		"version>=" : "0.1.36"
+	  }, {
+		"name" : "glm",
+		"version>=" : "0.9.9.8#2"
+	  }, {
+		"name" : "glfw3",
+		"version>=" : "3.3.8"
+	  }
+  ]
+}
