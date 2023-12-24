@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.10.2)
 project(engine LANGUAGES C CXX)
 
 file(GLOB_RECURSE engine_src
@@ -14,7 +15,7 @@ add_library(${PROJECT_NAME} ${engine_src})
 set(INCLUDE_DIRS "")
 set(LIBRARIES "")
 
-LIST(APPEND ../lib)
+add_subdirectory(lib)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PUBLIC "${LIBRARIES}")
