@@ -31,6 +31,7 @@ namespace nebula {
             return valid;
         }
 
+        void use();
 
     };
 

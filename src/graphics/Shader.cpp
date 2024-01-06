@@ -40,4 +40,8 @@ namespace nebula {
     Shader::~Shader() {
         glDeleteShader(id);
     }
+
+    void Shader::use() {
+        glLinkProgram(id);
+    }
 } // nebula

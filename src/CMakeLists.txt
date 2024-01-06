@@ -27,5 +27,9 @@ find_package(glm CONFIG REQUIRED)
 list(APPEND LIBRARIES glm::glm)
 list(APPEND INCLUDE_DIRS ${GLM_INCLUDE_DIRS})
 
+find_package(EnTT CONFIG REQUIRED)
+list(APPEND LIBRARIES EnTT::EnTT)
+list(APPEND INCLUDE_DIRS ${ENTT_INCLUDE_DIRS})
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE "${LIBRARIES}")
