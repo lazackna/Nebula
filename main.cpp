@@ -21,10 +21,10 @@ int main() {
     class Test : public Component {
 
     };
-    //engine.start();
-    Registry reg;
-    auto o = reg.createGameObject();
-    o.lock()->addComponent<Test>();
+    engine.start();
+//    Registry reg;
+//    auto o = reg.createGameObject();
+//    o.lock()->addComponent<Test>();
 
     return 0;
 }

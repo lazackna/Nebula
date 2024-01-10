@@ -6,33 +6,47 @@
 #define NEBULA_MAIN_SHADER_HPP
 
 #include <string>
+#include <map>
 #include <glad/glad.h>
+#include "filesystem"
+
+#include "glm/gtc/type_ptr.hpp"
 
 namespace nebula {
 
-    enum class ShaderType {
-        Vertex,
-        Fragment
-    };
-
     class Shader {
         std::string shader;
-        unsigned int id;
-        const GLchar* source;
+        GLuint programId = -1;
         bool valid = false;
         std::string errorMessage;
 
-    public:
-        explicit Shader(const std::string &shader, ShaderType type);
-        ~Shader();
-        [[nodiscard]] unsigned int getId() const;
+        std::map<std::string, GLint> uniforms;
 
-        explicit operator bool() const {
-            return valid;
+    public:
+        explicit Shader(const std::string &shader);
+        ~Shader();
+        [[nodiscard]] unsigned int getProgramId() const;
+
+        explicit inline operator bool() const {
+            return programId != -1;
         }
 
-        void use();
+        void use() const;
 
+        GLint getUniform(const std::string& name);
+
+        void setUniform(const std::string& uniform, const glm::mat4& value);
+        void setUniform(const std::string& uniform, const glm::mat3& value);
+        void setUniform(const std::string& uniform, const glm::vec4& value);
+        void setUniform(const std::string& uniform, const glm::vec3& value);
+        void setUniform(const std::string& uniform, const glm::vec2& value);
+        void setUniform(const std::string& uniform, float value);
+        void setUniform(const std::string& uniform, int value);
+        void setUniform(const std::string& uniform, bool value);
+
+    protected:
+        static bool createShader(const std::filesystem::path &shaderPath, GLenum shaderType, GLuint& shaderId);
+        static std::string readShaderData(const std::filesystem::path& shaderPath);
     };
 
 } // nebula
