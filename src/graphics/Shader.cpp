@@ -38,7 +38,7 @@ namespace nebula {
         programId = glCreateProgram();
 
         GLuint vertexId;
-        if(!createShader(shader + ".vs", GL_VERTEX_SHADER, vertexId)) {
+        if(!createShader(shader + ".vert", GL_VERTEX_SHADER, vertexId)) {
             glDeleteProgram(programId);
             programId = -1;
             return;
@@ -47,9 +47,15 @@ namespace nebula {
 
         glBindAttribLocation(programId, 0, "a_position");
         glEnableVertexAttribArray(0);
+        glBindAttribLocation(programId, 1, "a_color");
+        glEnableVertexAttribArray(1);
+        glBindAttribLocation(programId, 2, "a_texcoord");
+        glEnableVertexAttribArray(2);
+        glBindAttribLocation(programId, 3, "a_normal");
+        glEnableVertexAttribArray(3);
 
         GLuint fragmentId;
-        if(!createShader(shader + ".fs", GL_FRAGMENT_SHADER, fragmentId)) {
+        if(!createShader(shader + ".frag", GL_FRAGMENT_SHADER, fragmentId)) {
             glDeleteProgram(programId);
             programId = -1;
             return;

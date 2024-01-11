@@ -17,6 +17,9 @@ namespace nebula {
         size_t size;
         friend void drawVertices(GLenum shape, Vbo& vbo);
         friend Vbo createVbo(const std::vector<Vertex>& vertices);
+
+    public:
+        ~VBO();
     };
 
 } // nebula
