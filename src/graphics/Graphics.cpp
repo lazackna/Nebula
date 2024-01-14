@@ -20,16 +20,25 @@ namespace nebula {
     }
 
     void drawVertices(GLenum shape, Vbo &vbo) {
-        static Vertex tmpVertex;
         if (vbo->size > 0)
         {
             glBindBuffer(GL_ARRAY_BUFFER, vbo->id);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texcoord));
+            glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex),	(void*) ((char*)&tmpVertex.position - (char*)&tmpVertex));
-            glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex),		(void*) ((char*)&tmpVertex.color - (char*)&tmpVertex));
-            glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex),	(void*) ((char*)&tmpVertex.texcoord - (char*)&tmpVertex));
-            glVertexAttribPointer(3, 3, GL_FLOAT, false, sizeof(Vertex),	(void*) ((char*)&tmpVertex.normal - (char*)&tmpVertex));
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(2);
+            glEnableVertexAttribArray(3);
+
             glDrawArrays(shape, 0, (GLsizei)vbo->size);
+
+            glDisableVertexAttribArray(0);
+            glDisableVertexAttribArray(1);
+            glDisableVertexAttribArray(2);
+            glDisableVertexAttribArray(3);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
     }

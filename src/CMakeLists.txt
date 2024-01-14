@@ -31,5 +31,9 @@ find_package(EnTT CONFIG REQUIRED)
 list(APPEND LIBRARIES EnTT::EnTT)
 list(APPEND INCLUDE_DIRS ${ENTT_INCLUDE_DIRS})
 
+find_package(assimp CONFIG REQUIRED)
+list(APPEND LIBRARIES assimp::assimp)
+list(APPEND INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE "${LIBRARIES}")
