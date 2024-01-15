@@ -8,11 +8,11 @@
 #include <memory>
 #include <vector>
 
-#include "VBO.hpp"
+#include "VAO.hpp"
 
 namespace nebula {
-    Vbo createVbo(const std::vector<Vertex> &vertices); // NOLINT(*-redundant-declaration)
-    void drawVertices(GLenum shape, Vbo& vbo); // NOLINT(*-redundant-declaration)
+    Vao createVao(const std::vector<Vertex> &vertices); // NOLINT(*-redundant-declaration)
+    void drawVertices(GLenum shape, Vao& vbo); // NOLINT(*-redundant-declaration)
 } // nebula
 // Graphics
 

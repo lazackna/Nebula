@@ -169,40 +169,22 @@ namespace nebula {
         FpsCam camera(window->getWindow());
 
         std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
-
+        //auto shader = std::make_unique<Shader>("base");
         shader->use();
-        auto vbo = nebula::createVbo(createCube());
-//        float vertices[] = {
-//                0.5f,  0.5f, 0.0f,  // top right
-//                0.5f, -0.5f, 0.0f,  // bottom right
-//                -0.5f, -0.5f, 0.0f,  // bottom left
-//                -0.5f,  0.5f, 0.0f   // top left
-//        };
-//
-//        unsigned int indices[] = {  // note that we start from 0!
-//                0, 1, 3,  // first Triangle
-//                1, 2, 3   // second Triangle
-//        };
-//
-//        unsigned int VBO, VAO, EBO;
-//
-//        glGenVertexArrays(1, &VAO);
-//        glGenBuffers(1, &VBO);
-//        glGenBuffers(1, &EBO);
-//
-//        glBindVertexArray(VAO);
-//
-//        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-//        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-//
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-//
-//        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
-//        glEnableVertexAttribArray(0);
-//
-//        glBindBuffer(GL_ARRAY_BUFFER, 0);
-//        glBindVertexArray(0);
+
+        float vertices[] = {
+                -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0.0f,  0.5f, 0.0f
+        };
+
+        std::vector<Vertex> vertexes;
+
+        for(int i = 0; i < 3; i++) {
+            vertexes.push_back(Vertex::P(glm::vec3(vertices[0 + 3 * i], vertices[1 + 3 * i], vertices[2 + 3 * i])));
+        }
+
+        auto vao = createVao(vertexes);
         camera.setPosition(glm::vec3(0,0,-10));
         while (!glfwWindowShouldClose(window->getWindow())) {
 
@@ -231,19 +213,21 @@ namespace nebula {
             shader->setProjectionMatrix(projection);
             shader->setNormalMatrix(normalMatrix);
 
-            drawVertices(GL_TRIANGLES, vbo);
-
-           // glBindVertexArray(VAO);
-//            //shader.setUniform("a_position", glm::vec3(-0.3,0.4,10));
-//            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-//            glDrawArrays(GL_TRIANGLES)
+            drawVertices(GL_TRIANGLES, vao);
+//
+//            drawVertices(GL_TRIANGLES, vbo);
+//
+//           // glBindVertexArray(VAO);
+////            //shader.setUniform("a_position", glm::vec3(-0.3,0.4,10));
+////            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+////            glDrawArrays(GL_TRIANGLES)
 
             glfwSwapBuffers(window->getWindow());
             glfwPollEvents();
         }
 
 //        glDeleteVertexArrays(1, &VAO);
-//        glDeleteBuffers(1, &VBO);
+//        glDeleteBuffers(1, &VAO);
 //        glDeleteBuffers(1, &EBO);
         //glDeleteProgram(shaderProgram);
 
