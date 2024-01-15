@@ -35,15 +35,26 @@ namespace nebula {
             glDeleteProgram(programId);
         }
 
-        programId = glCreateProgram();
-
         GLuint vertexId;
         if(!createShader(shader + ".vert", GL_VERTEX_SHADER, vertexId)) {
             glDeleteProgram(programId);
+            glDeleteShader(vertexId);
             programId = -1;
             return;
         }
+
+        GLuint fragmentId;
+        if(!createShader(shader + ".frag", GL_FRAGMENT_SHADER, fragmentId)) {
+            glDeleteProgram(programId);
+            glDeleteShader(vertexId);
+            glDeleteShader(fragmentId);
+            programId = -1;
+            return;
+        }
+
+        programId = glCreateProgram();
         glAttachShader(programId, vertexId);
+        glAttachShader(programId, fragmentId);
 
         glBindAttribLocation(programId, 0, "a_position");
         glEnableVertexAttribArray(0);
@@ -54,16 +65,20 @@ namespace nebula {
         glBindAttribLocation(programId, 3, "a_normal");
         glEnableVertexAttribArray(3);
 
-        GLuint fragmentId;
-        if(!createShader(shader + ".frag", GL_FRAGMENT_SHADER, fragmentId)) {
-            glDeleteProgram(programId);
-            programId = -1;
-            return;
-        }
-        glAttachShader(programId, fragmentId);
-
         glLinkProgram(programId);
+
+        int success;
+        char infoLog[512];
+        glGetProgramiv(programId, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(programId, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        }
+
         glUseProgram(programId);
+
+        glDeleteShader(vertexId);
+        glDeleteShader(fragmentId);
     }
 
     unsigned int Shader::getProgramId() const {

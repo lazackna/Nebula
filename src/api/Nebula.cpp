@@ -166,10 +166,10 @@ namespace nebula {
 
     void Nebula::start() {
 
-        FpsCam camera(window->getWindow());
+        //FpsCam camera(window->getWindow());
 
-        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
-        //auto shader = std::make_unique<Shader>("base");
+        //std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
+        auto shader = std::make_unique<Shader>("resources/base");
         shader->use();
 
         float vertices[] = {
@@ -180,12 +180,26 @@ namespace nebula {
 
         std::vector<Vertex> vertexes;
 
-        for(int i = 0; i < 3; i++) {
-            vertexes.push_back(Vertex::P(glm::vec3(vertices[0 + 3 * i], vertices[1 + 3 * i], vertices[2 + 3 * i])));
-        }
+//        for(int i = 0; i < 3; i++) {
+//            vertexes.push_back(Vertex::P(glm::vec3(vertices[0 + 3 * i], vertices[1 + 3 * i], vertices[2 + 3 * i])));
+//        }
 
-        auto vao = createVao(vertexes);
-        camera.setPosition(glm::vec3(0,0,-10));
+        //auto vao = createVao(vertexes);
+        GLuint vbo, vao;
+        glGenBuffers(1, &vbo);
+        glGenVertexArrays(1, &vao);
+
+        glBindVertexArray(vao);
+
+        //vao->bind();
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        //camera.setPosition(glm::vec3(0,0,-10));
         while (!glfwWindowShouldClose(window->getWindow())) {
 
             GLenum error = glGetError();
@@ -197,23 +211,25 @@ namespace nebula {
             glClearColor(1, 1, 0, 1);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            int viewport[4];
-            glGetIntegerv(GL_VIEWPORT, viewport);
-            glm::mat4 projection = glm::perspective(glm::radians(75.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.01f, 400.0f);
-            glm::mat4 view = camera.getMatrix();
-            glm::mat4 model = glm::mat4(1);
-
-            glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(view * model)));
+//            int viewport[4];
+//            glGetIntegerv(GL_VIEWPORT, viewport);
+//            glm::mat4 projection = glm::perspective(glm::radians(75.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.01f, 400.0f);
+//            glm::mat4 view = camera.getMatrix();
+//            glm::mat4 model = glm::mat4(1);
+//
+//            glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(view * model)));
 
             //model = glm::translate(model, glm::vec3(0.05,0,0.1));
 
-            shader->use();
-            shader->setModelMatrix(model);
-            shader->setViewMatrix(view);
-            shader->setProjectionMatrix(projection);
-            shader->setNormalMatrix(normalMatrix);
-
-            drawVertices(GL_TRIANGLES, vao);
+            //shader->use();
+//            shader->setModelMatrix(model);
+//            shader->setViewMatrix(view);
+//            shader->setProjectionMatrix(projection);
+//            shader->setNormalMatrix(normalMatrix);
+//
+//            vao->bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            //drawVertices(GL_TRIANGLES, vao);
 //
 //            drawVertices(GL_TRIANGLES, vbo);
 //
