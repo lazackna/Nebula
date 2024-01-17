@@ -56,14 +56,14 @@ namespace nebula {
         glAttachShader(programId, vertexId);
         glAttachShader(programId, fragmentId);
 
-        glBindAttribLocation(programId, 0, "a_position");
-        glEnableVertexAttribArray(0);
-        glBindAttribLocation(programId, 1, "a_color");
-        glEnableVertexAttribArray(1);
-        glBindAttribLocation(programId, 2, "a_texcoord");
-        glEnableVertexAttribArray(2);
-        glBindAttribLocation(programId, 3, "a_normal");
-        glEnableVertexAttribArray(3);
+//        glEnableVertexAttribArray(0);
+//        glBindAttribLocation(programId, 0, "a_position");
+//        glEnableVertexAttribArray(1);
+//        glBindAttribLocation(programId, 1, "a_normal");
+//        glEnableVertexAttribArray(2);
+//        glBindAttribLocation(programId, 2, "a_texcoord");
+//        glEnableVertexAttribArray(3);
+//        glBindAttribLocation(programId, 3, "a_color");
 
         glLinkProgram(programId);
 

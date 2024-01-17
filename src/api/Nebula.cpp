@@ -73,7 +73,7 @@ namespace nebula {
             exit(EXIT_FAILURE);
         }
 
-        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
 
         glViewport(0, 0, options.width, options.height);
@@ -180,9 +180,9 @@ namespace nebula {
 
         std::vector<Vertex> vertexes;
 
-//        for(int i = 0; i < 3; i++) {
-//            vertexes.push_back(Vertex::P(glm::vec3(vertices[0 + 3 * i], vertices[1 + 3 * i], vertices[2 + 3 * i])));
-//        }
+        for(int i = 0; i < 3; i++) {
+            vertexes.push_back(Vertex::P(glm::vec3(vertices[0 + 3 * i], vertices[1 + 3 * i], vertices[2 + 3 * i])));
+        }
 
         //auto vao = createVao(vertexes);
         GLuint vbo, vao;
@@ -194,10 +194,21 @@ namespace nebula {
         //vao->bind();
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(Vertex), &vertexes, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        //This belongs to the mesh
+        //We do this to specify that the vertex attribute at location x is of type,.
         glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texcoord));
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
+
+        //This is shader specific
+        shader->setUniform("ourColor", glm::vec4(1,0,0,1));
 
         //camera.setPosition(glm::vec3(0,0,-10));
         while (!glfwWindowShouldClose(window->getWindow())) {
@@ -209,7 +220,7 @@ namespace nebula {
             }
 
             glClearColor(1, 1, 0, 1);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT);
 
 //            int viewport[4];
 //            glGetIntegerv(GL_VIEWPORT, viewport);
@@ -228,7 +239,7 @@ namespace nebula {
 //            shader->setNormalMatrix(normalMatrix);
 //
 //            vao->bind();
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
             //drawVertices(GL_TRIANGLES, vao);
 //
 //            drawVertices(GL_TRIANGLES, vbo);

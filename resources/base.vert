@@ -1,6 +1,9 @@
-#version 330 core
-layout (location = 0) in vec3 aPos;
+#version 400
+layout (location = 0) in vec3 a_position;
+layout (location = 1) in vec3 a_normal;
+layout (location = 2) in vec2 a_texcoord;
+layout (location = 3) in vec4 a_color;
 void main()
 {
-   gl_Position = vec4(aPos, 1.0);
+   gl_Position = vec4(a_position, 1.0);
 }
