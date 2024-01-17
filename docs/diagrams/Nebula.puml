@@ -1,0 +1,27 @@
+@startuml
+namespace nebula {
+    struct NebulaOptions {
+        width : int
+        height : int
+        title : string
+    }
+
+    class Nebula {
+
+        -options : NebulaOptions
+        -{static} instance : Nebula*
+
+        +Nebula(const NebulaOptions&)
+        +start()
+        +{static} getInstance() : Nebula&
+
+        -initialize()
+
+    }
+}
+
+Nebula -* NebulaOptions
+
+
+
+@enduml
