@@ -7,7 +7,7 @@
 FpsCam::FpsCam(GLFWwindow* _window)
 {
 	window = _window;
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if (glfwRawMouseMotionSupported())
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
@@ -42,24 +42,22 @@ void FpsCam::update(float deltatime)
 	float deltaY = (float)(lastX - x);
 	float deltaX = (float)(lastY - y);
 
-	std::cout << deltaY << " | " << deltaX << std::endl;
-
 	rotation.x -= (float)(lastY - y) / 300.0f;
 	rotation.y -= (float)(lastX - x) / 300.0f;
 
-	//std::cout << lastX << " | " << rotation.y << std::endl;
 	lastX = x;
 	lastY = y;
 
+    float factor = 0.05f * 100;
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		move(0, 10, deltatime);
+		move(0, factor, deltatime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		move(180, 10, deltatime);
+		move(180, factor, deltatime);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		move(90, 10, deltatime);
+		move(90, factor, deltatime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		move(-90, 10, deltatime);
+		move(-90, factor, deltatime);
 }
 
 glm::vec3 FpsCam::getPosition()

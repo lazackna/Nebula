@@ -8,6 +8,7 @@ namespace nebula {
     void BasicShader::setModelMatrix(const glm::mat4 &modelMatrix) {
         this->modelMatrix = modelMatrix;
         setUniform("modelMatrix", modelMatrix);
+        setUniform("normalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrix))));
     }
 
     void BasicShader::setProjectionMatrix(const glm::mat4 &projectionMatrix) {
@@ -21,9 +22,4 @@ namespace nebula {
     }
 
     BasicShader::BasicShader(const std::string &shader) : Shader(shader), projectionMatrix(1.0f), modelMatrix(1.0f), viewMatrix(1.0f) {}
-
-    void BasicShader::setNormalMatrix(const glm::mat3 &normalMatrix) {
-        this->normalMatrix = normalMatrix;
-        setUniform("normalMatrix", normalMatrix);
-    }
 } // nebula

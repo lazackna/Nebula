@@ -56,14 +56,14 @@ namespace nebula {
         glAttachShader(programId, vertexId);
         glAttachShader(programId, fragmentId);
 
-//        glEnableVertexAttribArray(0);
-//        glBindAttribLocation(programId, 0, "a_position");
-//        glEnableVertexAttribArray(1);
-//        glBindAttribLocation(programId, 1, "a_normal");
-//        glEnableVertexAttribArray(2);
-//        glBindAttribLocation(programId, 2, "a_texcoord");
-//        glEnableVertexAttribArray(3);
-//        glBindAttribLocation(programId, 3, "a_color");
+        glEnableVertexAttribArray(0);
+        glBindAttribLocation(programId, 0, "a_position");
+        glEnableVertexAttribArray(1);
+        glBindAttribLocation(programId, 1, "a_normal");
+        glEnableVertexAttribArray(2);
+        glBindAttribLocation(programId, 2, "a_texcoord");
+        glEnableVertexAttribArray(3);
+        glBindAttribLocation(programId, 3, "a_color");
 
         glLinkProgram(programId);
 
@@ -116,28 +116,31 @@ namespace nebula {
             return it->second;
         }
         GLint location = glGetUniformLocation(programId, name.c_str());
-        uniforms[name] = location;
+        if(location >= 0) {
+            uniforms[name] = location;
+        }
+
         return location;
     }
 
     void Shader::setUniform(const std::string &name, const glm::mat4 &mat) {
-        glUniformMatrix4fv(getUniform(name), 1, GL_FALSE, glm::value_ptr(mat));
+        glUniformMatrix4fv(getUniform(name), 1, false, &mat[0][0]);
     }
 
     void Shader::setUniform(const std::string &uniform, const glm::mat3 &value) {
-        glUniformMatrix3fv(getUniform(uniform), 1, false, glm::value_ptr(value));
+        glUniformMatrix3fv(getUniform(uniform), 1, false, &value[0][0]);
     }
 
     void Shader::setUniform(const std::string &uniform, const glm::vec4 &value) {
-        glUniform4fv(getUniform(uniform), 1, glm::value_ptr(value));
+        glUniform4fv(getUniform(uniform), 1, &value[0]);
     }
 
     void Shader::setUniform(const std::string &uniform, const glm::vec3 &value) {
-        glUniform3fv(getUniform(uniform), 1, glm::value_ptr(value));
+        glUniform3fv(getUniform(uniform), 1, &value[0]);
     }
 
     void Shader::setUniform(const std::string &uniform, const glm::vec2 &value) {
-        glUniform2fv(getUniform(uniform), 1, glm::value_ptr(value));
+        glUniform2fv(getUniform(uniform), 1, &value[0]);
     }
 
     void Shader::setUniform(const std::string &uniform, float value) {

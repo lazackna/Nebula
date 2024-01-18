@@ -15,6 +15,8 @@
 
 #include "../graphics/FpsCam.hpp"
 
+#include "../util/math.hpp"
+
 #ifdef WIN32
 
 void GLAPIENTRY onDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,
@@ -73,15 +75,16 @@ namespace nebula {
             exit(EXIT_FAILURE);
         }
 
-        //glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_BLEND);
 
         glViewport(0, 0, options.width, options.height);
 
-        if(glDebugMessageCallback) {
-            glDebugMessageCallback(&onDebug, nullptr);
-            glEnable(GL_DEBUG_OUTPUT);
-        }
+        //if(glDebugMessageCallback) {
+        //glEnable(GL_DEBUG_OUTPUT);
+        //glDebugMessageCallback(&onDebug, nullptr);
+            //glEnable(GL_DEBUG_OUTPUT);
+        //}
 
         glfwSetFramebufferSizeCallback(window->getWindow(), framebufferResizeCallback);
     }
@@ -166,10 +169,10 @@ namespace nebula {
 
     void Nebula::start() {
 
-        //FpsCam camera(window->getWindow());
+        FpsCam camera(window->getWindow());
 
-        //std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
-        auto shader = std::make_unique<Shader>("resources/base");
+        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
+        //auto shader = std::make_unique<Shader>("resources/base");
         shader->use();
 
         float vertices[] = {
@@ -210,8 +213,17 @@ namespace nebula {
         //This is shader specific
         shader->setUniform("ourColor", glm::vec4(1,0,0,1));
 
-        //camera.setPosition(glm::vec3(0,0,-10));
+
+
+        float rotation = 0;
+
+        float currentTime = static_cast<float>(glfwGetTime());
+        float lastTime = currentTime;
         while (!glfwWindowShouldClose(window->getWindow())) {
+
+            currentTime = static_cast<float>(glfwGetTime());
+            float deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
 
             GLenum error = glGetError();
             if (error != GL_NO_ERROR) {
@@ -219,25 +231,49 @@ namespace nebula {
                 std::cout << "Got an error: " << error << "\n";
             }
 
-            glClearColor(1, 1, 0, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//            int viewport[4];
-//            glGetIntegerv(GL_VIEWPORT, viewport);
-//            glm::mat4 projection = glm::perspective(glm::radians(75.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.01f, 400.0f);
-//            glm::mat4 view = camera.getMatrix();
-//            glm::mat4 model = glm::mat4(1);
-//
-//            glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(view * model)));
+            int viewport[4];
+            glGetIntegerv(GL_VIEWPORT, viewport);
+            glm::mat4 projection = glm::perspective(glm::radians(75.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.01f, 100.0f);
+            glm::mat4 model = glm::mat4(1);
 
-            //model = glm::translate(model, glm::vec3(0.05,0,0.1));
+            rotate(model, glm::vec3(rotation,rotation,rotation));
 
-            //shader->use();
-//            shader->setModelMatrix(model);
-//            shader->setViewMatrix(view);
-//            shader->setProjectionMatrix(projection);
-//            shader->setNormalMatrix(normalMatrix);
-//
+            shader->setProjectionMatrix(projection);
+
+            camera.update(deltaTime);
+            shader->setViewMatrix(glm::translate(glm::mat4(1), glm::vec3(-30,0,0)));
+            shader->setModelMatrix(model);
+//            std::cout << "Projection matrix: " << std::to_string(projection[3].x) << " | " << std::to_string(projection[3].y) << " | " << std::to_string(projection[3].z) << "\n";
+//            std::cout << "View matrix: " << std::to_string(camera.getMatrix()[3].x) << " | " << std::to_string(camera.getMatrix()[3].y) << " | " << std::to_string(camera.getMatrix()[3].z) << "\n";
+//            std::cout << "Model matrix: " << std::to_string(model[3].x) << " | " << std::to_string(model[3].y) << " | " << std::to_string(model[3].z) << "\n";
+
+            std::cout << "Projection Matrix:\n";
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    std::cout << projection[i][j] << " ";
+                }
+                std::cout << "\n";
+            }
+
+            std::cout << "View Matrix:\n";
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    std::cout << camera.getMatrix()[i][j] << " ";
+                }
+                std::cout << "\n";
+            }
+
+            std::cout << "Model Matrix:\n";
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    std::cout << model[i][j] << " ";
+                }
+                std::cout << "\n";
+            }
+            std::cout << "\n";
 //            vao->bind();
             glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
             //drawVertices(GL_TRIANGLES, vao);
@@ -248,7 +284,7 @@ namespace nebula {
 ////            //shader.setUniform("a_position", glm::vec3(-0.3,0.4,10));
 ////            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 ////            glDrawArrays(GL_TRIANGLES)
-
+            rotation += 0.1f;
             glfwSwapBuffers(window->getWindow());
             glfwPollEvents();
         }
