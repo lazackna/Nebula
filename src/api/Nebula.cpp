@@ -213,9 +213,9 @@ namespace nebula {
         glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
 
         //This is shader specific
-        shader->setUniform("ourColor", glm::vec4(1,0,0,1));
+        //shader->setUniform("ourColor", glm::vec4(1,0,0,1));
 
-        Texture texture = Texture(R"(C:\Users\Jasper\Downloads\tex.png)");
+        Texture texture = Texture(R"(wall.jpg)");
 
         float rotation = 0;
 
