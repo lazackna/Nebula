@@ -35,5 +35,9 @@ find_package(assimp CONFIG REQUIRED)
 list(APPEND LIBRARIES assimp::assimp)
 list(APPEND INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
 
+find_package(lodepng CONFIG REQUIRED)
+list(APPEND LIBRARIES lodepng)
+list(APPEND INCLUDE_DIRS ${LODEPNG_INCLUDE_DIRS})
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE "${LIBRARIES}")

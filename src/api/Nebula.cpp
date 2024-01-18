@@ -16,6 +16,7 @@
 #include "../graphics/FpsCam.hpp"
 
 #include "../util/math.hpp"
+#include "../graphics/Texture.hpp"
 
 #ifdef WIN32
 
@@ -214,7 +215,7 @@ namespace nebula {
         //This is shader specific
         shader->setUniform("ourColor", glm::vec4(1,0,0,1));
 
-
+        Texture texture = Texture(R"(C:\Users\Jasper\Downloads\tex.png)");
 
         float rotation = 0;
 
@@ -250,7 +251,7 @@ namespace nebula {
             view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
             shader->setViewMatrix(camera.getMatrix());
             shader->setModelMatrix(model);
-
+            texture.bind();
 //            vao->bind();
             glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
             //drawVertices(GL_TRIANGLES, vao);

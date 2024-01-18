@@ -9,11 +9,20 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 
+out vec3 position;
 out vec3 normal;
+out vec2 texcoord;
+out vec4 color;
+
+out vec3 normalColor;
 
 void main()
 {
     //normal = normalize(normalMatrix * a_normal);
-    normal = 0.5 * a_normal + 0.5;
+    position = a_position;
+    normal = a_normal;
+    texcoord = a_texcoord;
+    color = a_color;
+    normalColor = 0.5 * a_normal + 0.5;
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(a_position,1);
 }
