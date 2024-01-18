@@ -124,7 +124,7 @@ namespace nebula {
     }
 
     void Shader::setUniform(const std::string &name, const glm::mat4 &mat) {
-        glUniformMatrix4fv(getUniform(name), 1, false, &mat[0][0]);
+        glUniformMatrix4fv(getUniform(name), 1, false, glm::value_ptr(mat));
     }
 
     void Shader::setUniform(const std::string &uniform, const glm::mat3 &value) {

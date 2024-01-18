@@ -13,7 +13,7 @@ out vec3 normal;
 
 void main()
 {
-    normal = normalize(normalMatrix * a_normal);
-    normal = 0.5 * normal + 0.5;
+    //normal = normalize(normalMatrix * a_normal);
+    normal = 0.5 * a_normal + 0.5;
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(a_position,1);
 }

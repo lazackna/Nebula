@@ -15,7 +15,7 @@ struct e {
 };
 
 int main() {
-    NebulaOptions options(720, 480, "Nebula");
+    NebulaOptions options(800, 600, "Nebula");
     Nebula engine = Nebula(options);
 
 

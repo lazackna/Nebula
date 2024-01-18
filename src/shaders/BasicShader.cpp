@@ -13,12 +13,12 @@ namespace nebula {
 
     void BasicShader::setProjectionMatrix(const glm::mat4 &projectionMatrix) {
         this->projectionMatrix = projectionMatrix;
-        setUniform("projectionMatrix", modelMatrix);
+        setUniform("projectionMatrix", projectionMatrix);
     }
 
     void BasicShader::setViewMatrix(const glm::mat4 &viewMatrix) {
         this->viewMatrix = viewMatrix;
-        setUniform("viewMatrix", modelMatrix);
+        setUniform("viewMatrix", viewMatrix);
     }
 
     BasicShader::BasicShader(const std::string &shader) : Shader(shader), projectionMatrix(1.0f), modelMatrix(1.0f), viewMatrix(1.0f) {}

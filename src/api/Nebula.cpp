@@ -76,6 +76,7 @@ namespace nebula {
         }
 
         glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
         //glEnable(GL_BLEND);
 
         glViewport(0, 0, options.width, options.height);
@@ -236,44 +237,20 @@ namespace nebula {
 
             int viewport[4];
             glGetIntegerv(GL_VIEWPORT, viewport);
-            glm::mat4 projection = glm::perspective(glm::radians(75.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.01f, 100.0f);
+            glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
             glm::mat4 model = glm::mat4(1);
 
             rotate(model, glm::vec3(rotation,rotation,rotation));
-
+            //model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 0.0f, 0.0f));
+            //model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
             shader->setProjectionMatrix(projection);
 
             camera.update(deltaTime);
-            shader->setViewMatrix(glm::translate(glm::mat4(1), glm::vec3(-30,0,0)));
+            glm::mat4 view = glm::mat4(1);
+            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+            shader->setViewMatrix(camera.getMatrix());
             shader->setModelMatrix(model);
-//            std::cout << "Projection matrix: " << std::to_string(projection[3].x) << " | " << std::to_string(projection[3].y) << " | " << std::to_string(projection[3].z) << "\n";
-//            std::cout << "View matrix: " << std::to_string(camera.getMatrix()[3].x) << " | " << std::to_string(camera.getMatrix()[3].y) << " | " << std::to_string(camera.getMatrix()[3].z) << "\n";
-//            std::cout << "Model matrix: " << std::to_string(model[3].x) << " | " << std::to_string(model[3].y) << " | " << std::to_string(model[3].z) << "\n";
 
-            std::cout << "Projection Matrix:\n";
-            for (int i = 0; i < 4; ++i) {
-                for (int j = 0; j < 4; ++j) {
-                    std::cout << projection[i][j] << " ";
-                }
-                std::cout << "\n";
-            }
-
-            std::cout << "View Matrix:\n";
-            for (int i = 0; i < 4; ++i) {
-                for (int j = 0; j < 4; ++j) {
-                    std::cout << camera.getMatrix()[i][j] << " ";
-                }
-                std::cout << "\n";
-            }
-
-            std::cout << "Model Matrix:\n";
-            for (int i = 0; i < 4; ++i) {
-                for (int j = 0; j < 4; ++j) {
-                    std::cout << model[i][j] << " ";
-                }
-                std::cout << "\n";
-            }
-            std::cout << "\n";
 //            vao->bind();
             glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
             //drawVertices(GL_TRIANGLES, vao);
@@ -284,7 +261,7 @@ namespace nebula {
 ////            //shader.setUniform("a_position", glm::vec3(-0.3,0.4,10));
 ////            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 ////            glDrawArrays(GL_TRIANGLES)
-            rotation += 0.1f;
+            rotation += 0.5f;
             glfwSwapBuffers(window->getWindow());
             glfwPollEvents();
         }
