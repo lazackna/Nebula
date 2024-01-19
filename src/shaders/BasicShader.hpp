@@ -5,7 +5,7 @@
 #ifndef NEBULA_MAIN_BASICSHADER_HPP
 #define NEBULA_MAIN_BASICSHADER_HPP
 
-#include "../graphics/Shader.hpp"
+#include "Shader.hpp"
 
 namespace nebula {
 

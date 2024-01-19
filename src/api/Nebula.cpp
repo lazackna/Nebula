@@ -6,9 +6,6 @@
 #include <glad/glad.h>
 #include <iostream>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include "Nebula.hpp"
 
 #include "../util/Debug.hpp"
@@ -21,6 +18,8 @@
 #include "../util/math.hpp"
 #include "../graphics/Texture.hpp"
 #include "../graphics/VBO.hpp"
+#include "../graphics/mesh/Mesh.hpp"
+#include "../util/glUtil.hpp"
 
 #ifdef WIN32
 
@@ -108,10 +107,12 @@ namespace nebula {
     void Nebula::framebufferResizeCallback(GLFWwindow *window, int width, int height) {
         glViewport(0, 0, width, height);
     }
-
+    bool enableTexture = false;
     void Nebula::onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, true);
+        } else if(key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+            enableTexture = !enableTexture;
         }
     }
 
@@ -178,46 +179,15 @@ namespace nebula {
         FpsCam camera(window->getWindow());
 
         std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
-        //auto shader = std::make_unique<Shader>("resources/base");
         shader->use();
 
-        float vertices[] = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f
-        };
 
-        std::vector<Vertex> vertexes = createCube();
-
-//        for(int i = 0; i < 3; i++) {
-//            vertexes.push_back(Vertex::P(glm::vec3(vertices[0 + 3 * i], vertices[1 + 3 * i], vertices[2 + 3 * i])));
-//        }
-
-        //auto vao = createVao(vertexes);
-        //GLuint vbo;//, vao;
-       // glGenBuffers(1, &vbo);
-       // glGenVertexArrays(1, &vao);
-
-        //glBindVertexArray(vao);
-
-//        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//        glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(Vertex), &vertexes[0], GL_STATIC_DRAW);
-        Vao vao = std::make_unique<VAO>();
-        vao->bind();
-        Vbo vbo = std::make_unique<VBO>(vertexes);
-        vbo->bind();
-
-        vao->addVertexBufferLayout(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
-        vao->addVertexBufferLayout(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
-        vao->addVertexBufferLayout(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texcoord));
-        vao->addVertexBufferLayout(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
-
-
+        Mesh mesh = Mesh(std::move(createCube()), "test");
         Texture texture = Texture("tex.png");
 
         float rotation = 0;
 
-        float currentTime = static_cast<float>(glfwGetTime());
+        auto currentTime = static_cast<float>(glfwGetTime());
         float lastTime = currentTime;
         while (!glfwWindowShouldClose(window->getWindow())) {
 
@@ -234,37 +204,30 @@ namespace nebula {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            //projection
             int viewport[4];
             glGetIntegerv(GL_VIEWPORT, viewport);
-            glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-            glm::mat4 model = glm::mat4(1);
 
-            rotate(model, glm::vec3(rotation,rotation,rotation));
-            //model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 0.0f, 0.0f));
-            //model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
+            glm::mat4 projection = createPerspective(glm::radians(45.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.1f, 100.0f);
             shader->setProjectionMatrix(projection);
 
+            //view
             camera.update(deltaTime);
-            glm::mat4 view = glm::mat4(1);
-            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
             shader->setViewMatrix(camera.getMatrix());
+            //model/world
+            glm::mat4 model = glm::mat4(1);
+            rotate(model, glm::vec3(rotation,rotation,rotation));
             shader->setModelMatrix(model);
 
             texture.bind();
+            shader->setUniform("ourTexture", enableTexture);
 
-            vao->bind();
-            glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
-            vao->unbind();
+            mesh.draw();
 
             rotation += 0.5f;
             glfwSwapBuffers(window->getWindow());
             glfwPollEvents();
         }
-
-//        glDeleteVertexArrays(1, &VAO);
-//        glDeleteBuffers(1, &VAO);
-//        glDeleteBuffers(1, &EBO);
-        //glDeleteProgram(shaderProgram);
 
         window = nullptr;
         glfwTerminate();

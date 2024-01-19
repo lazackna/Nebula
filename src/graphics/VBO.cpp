@@ -26,4 +26,8 @@ namespace nebula {
     VBO::~VBO() {
         glDeleteBuffers(1, &id);
     }
+
+    Vbo VBO::create(const std::vector<Vertex> &vertices) {
+        return std::make_unique<VBO>(vertices);
+    }
 } // nebula

@@ -9,19 +9,30 @@
 #include <string>
 #include "../Vertex.hpp"
 
+#include "../VAO.hpp"
+#include "../VBO.hpp"
+
 namespace nebula {
 
     class Mesh {
+    public:
         class Primitive {
             std::string name;
-            std::vector<Vertex> vertices;
-            unsigned int VAO;
+            size_t size;
+            Vao vao;
+            Vbo vbo;
+        public:
+            Primitive(std::vector<Vertex>& vertices, const std::string& name);
+            void setupMesh(std::vector<Vertex>& vertices);
 
-            Primitive(std::vector<Vertex> vertices, const std::string& name);
-            void setupMesh();
+            void draw();
         };
 
-        unsigned int vbo;
+        Mesh(std::vector<Vertex> vertices, const std::string& name);
+        void draw();
+
+    private:
+        std::vector<std::unique_ptr<Primitive>> primitives;
     };
 
 } // nebula

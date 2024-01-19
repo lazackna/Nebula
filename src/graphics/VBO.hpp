@@ -20,6 +20,8 @@ namespace nebula {
         ~VBO();
         void bind() const;
         static void unbind();
+
+        static Vbo create(const std::vector<Vertex>& vertices);
     };
 
 } // nebula

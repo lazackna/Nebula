@@ -17,8 +17,5 @@
   }, {
     "name" : "assimp",
     "version>=" : "5.3.1"
-  }, {
-    "name" : "lodepng",
-    "version>=" : "2021-12-04"
   }]
 }

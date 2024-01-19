@@ -14,18 +14,6 @@ namespace nebula {
     class VAO;
 
     using Vao = std::unique_ptr<VAO>;
-//    class VAO {
-//        GLuint id;
-//        size_t size;
-//        friend void drawVertices(GLenum shape, Vao& vbo);
-//        friend Vao createVao(const std::vector<Vertex>& vertices);
-//
-//    public:
-//        ~VAO();
-//
-//        void bind() const;
-//        static void unbind();
-//    };
 
     class VAO {
         unsigned int id;
@@ -40,6 +28,8 @@ namespace nebula {
 
         void addVertexBufferLayout(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
                                    const GLvoid *pointer) const;
+
+        static Vao create();
     };
 
 } // nebula

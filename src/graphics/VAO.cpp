@@ -29,4 +29,8 @@ namespace nebula {
         glVertexAttribPointer(index, size, type, normalized, stride, pointer);
         unbind();
     }
+
+    Vao VAO::create() {
+        return std::make_unique<VAO>();
+    }
 } // nebula

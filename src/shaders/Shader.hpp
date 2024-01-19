@@ -33,10 +33,22 @@ namespace nebula {
 
         void use() const;
 
+        //virtual void setMaterial(const Material &material) = 0;
+
+        // Sets the projection matrix
+        virtual void setProjectionMatrix(const glm::mat4 &matrix) = 0;
+
+        // Sets the view (camera) matrix
+        virtual void setViewMatrix(const glm::mat4 &matrix) = 0;
+
+        // Sets the model matrix
+        virtual void setModelMatrix(const glm::mat4 &matrix) = 0;
+
         GLint getUniform(const std::string& name);
 
         void setUniform(const std::string& uniform, const glm::mat4& value);
         void setUniform(const std::string& uniform, const glm::mat3& value);
+        void setUniform(const std::string& uniform, const glm::mat2& value);
         void setUniform(const std::string& uniform, const glm::vec4& value);
         void setUniform(const std::string& uniform, const glm::vec3& value);
         void setUniform(const std::string& uniform, const glm::vec2& value);

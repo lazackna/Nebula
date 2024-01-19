@@ -131,6 +131,10 @@ namespace nebula {
         glUniformMatrix3fv(getUniform(uniform), 1, false, &value[0][0]);
     }
 
+    void Shader::setUniform(const std::string &uniform, const glm::mat2 &value) {
+        glUniformMatrix2fv(getUniform(uniform), 1, false, &value[0][0]);
+    }
+
     void Shader::setUniform(const std::string &uniform, const glm::vec4 &value) {
         glUniform4fv(getUniform(uniform), 1, &value[0]);
     }

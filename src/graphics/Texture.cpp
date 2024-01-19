@@ -4,7 +4,7 @@
 
 #include <vector>
 #include "Texture.hpp"
-#include "stb_image.h"
+#include "../stb/image.hpp"
 
 namespace nebula {
     Texture::Texture(const std::filesystem::path &filePath, Texture::Wrap wrapS, Texture::Wrap wrapT) {
