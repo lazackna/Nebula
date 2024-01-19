@@ -6,6 +6,9 @@
 #include <glad/glad.h>
 #include <iostream>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include "Nebula.hpp"
 
 #include "../util/Debug.hpp"
@@ -17,6 +20,7 @@
 
 #include "../util/math.hpp"
 #include "../graphics/Texture.hpp"
+#include "../graphics/VBO.hpp"
 
 #ifdef WIN32
 
@@ -190,32 +194,26 @@ namespace nebula {
 //        }
 
         //auto vao = createVao(vertexes);
-        GLuint vbo, vao;
-        glGenBuffers(1, &vbo);
-        glGenVertexArrays(1, &vao);
+        //GLuint vbo;//, vao;
+       // glGenBuffers(1, &vbo);
+       // glGenVertexArrays(1, &vao);
 
-        glBindVertexArray(vao);
+        //glBindVertexArray(vao);
 
-        //vao->bind();
+//        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//        glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(Vertex), &vertexes[0], GL_STATIC_DRAW);
+        Vao vao = std::make_unique<VAO>();
+        vao->bind();
+        Vbo vbo = std::make_unique<VBO>(vertexes);
+        vbo->bind();
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(Vertex), &vertexes[0], GL_STATIC_DRAW);
+        vao->addVertexBufferLayout(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
+        vao->addVertexBufferLayout(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
+        vao->addVertexBufferLayout(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texcoord));
+        vao->addVertexBufferLayout(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
 
-        //This belongs to the mesh
-        //We do this to specify that the vertex attribute at location x is of type,.
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texcoord));
-        glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
 
-        //This is shader specific
-        //shader->setUniform("ourColor", glm::vec4(1,0,0,1));
-
-        Texture texture = Texture(R"(wall.jpg)");
+        Texture texture = Texture("tex.png");
 
         float rotation = 0;
 
@@ -251,17 +249,13 @@ namespace nebula {
             view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
             shader->setViewMatrix(camera.getMatrix());
             shader->setModelMatrix(model);
+
             texture.bind();
-//            vao->bind();
+
+            vao->bind();
             glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
-            //drawVertices(GL_TRIANGLES, vao);
-//
-//            drawVertices(GL_TRIANGLES, vbo);
-//
-//           // glBindVertexArray(VAO);
-////            //shader.setUniform("a_position", glm::vec3(-0.3,0.4,10));
-////            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-////            glDrawArrays(GL_TRIANGLES)
+            vao->unbind();
+
             rotation += 0.5f;
             glfwSwapBuffers(window->getWindow());
             glfwPollEvents();

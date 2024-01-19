@@ -10,8 +10,23 @@ namespace nebula {
         glBindVertexArray(id);
     }
 
-    void VAO::unbind(){
+    void VAO::unbind() {
         glBindVertexArray(0);
     }
 
+    VAO::VAO() : id(-1) {
+        glGenVertexArrays(1, &id);
+    }
+
+    VAO::~VAO() {
+        glDeleteVertexArrays(1, &id);
+    }
+
+    void VAO::addVertexBufferLayout(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
+                                    const GLvoid *pointer) const {
+        bind();
+        glEnableVertexAttribArray(index);
+        glVertexAttribPointer(index, size, type, normalized, stride, pointer);
+        unbind();
+    }
 } // nebula
