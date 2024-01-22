@@ -19,6 +19,8 @@
 #include "../graphics/Texture.hpp"
 #include "../graphics/VBO.hpp"
 #include "../graphics/mesh/Mesh.hpp"
+#include "../graphics/mesh/MeshLoading.hpp"
+#include "../graphics/mesh/loaders/AssimpMeshLoader.hpp"
 #include "../util/glUtil.hpp"
 
 #ifdef WIN32
@@ -181,6 +183,7 @@ namespace nebula {
         std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
         shader->use();
 
+        auto meshLoader = MeshLoading(std::make_unique<AssimpMeshLoader>());
 
         Mesh mesh = Mesh(std::move(createCube()), "test");
         Texture texture = Texture("tex.png");

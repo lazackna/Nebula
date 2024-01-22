@@ -24,20 +24,11 @@ namespace nebula {
 
         std::unique_ptr<MeshLoader> defaultLoader;
 
-        MeshLoading* instance;
+        static MeshLoading* instance;
     public:
-        template<class T, typename... Args>
-        requires std::is_base_of_v<MeshLoader, T>
-        explicit MeshLoading(Args... args) {
-            if(instance) {
-                throw std::runtime_error("Class Meshloading was already initialized");
-            }
+        explicit MeshLoading(std::unique_ptr<MeshLoader> defaultLoader);
 
-            this->defaultLoader = std::move(std::make_unique<T>(args...));
-            instance = this;
-        }
-
-        MeshLoading& getInstance();
+        static MeshLoading& getInstance();
 
         template<class T, typename... Args> requires std::is_base_of_v<MeshLoader, T>
         void registerMeshLoader(const std::string& signature, Args... args) {
