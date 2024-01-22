@@ -14,6 +14,8 @@
 
 namespace nebula {
 
+    class Material;
+
     class Shader {
         std::string shader;
         GLuint programId = -1;
@@ -44,6 +46,7 @@ namespace nebula {
         // Sets the model matrix
         virtual void setModelMatrix(const glm::mat4 &matrix) = 0;
 
+        virtual void setMaterial(const Material& material) = 0;
         GLint getUniform(const std::string& name);
 
         void setUniform(const std::string& uniform, const glm::mat4& value);

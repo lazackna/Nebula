@@ -16,7 +16,7 @@
 #include "../graphics/FpsCam.hpp"
 
 #include "../util/math.hpp"
-#include "../graphics/Texture.hpp"
+#include "../graphics/material/Texture.hpp"
 #include "../graphics/VBO.hpp"
 #include "../graphics/mesh/Mesh.hpp"
 #include "../graphics/mesh/MeshLoading.hpp"
@@ -183,10 +183,13 @@ namespace nebula {
         std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
         shader->use();
 
-        auto meshLoader = MeshLoading(std::make_unique<AssimpMeshLoader>());
+        auto meshLoader = ModelLoading(std::make_unique<AssimpM>());
 
         Mesh mesh = Mesh(std::move(createCube()), "test");
         Texture texture = Texture("tex.png");
+//        //Texture texture = Texture(glm::vec4(1,1,1,1));
+//        std::vector<glm::vec4> colors ={glm::vec4(1,0,0,1), glm::vec4(0,1,0,1), glm::vec4(0,0,1,1), glm::vec4(1,1,0,1)};
+//        Texture texture = Texture(colors, 2, 2);
 
         float rotation = 0;
 
@@ -225,7 +228,7 @@ namespace nebula {
             texture.bind();
             shader->setUniform("ourTexture", enableTexture);
 
-            mesh.draw();
+            mesh.draw(*shader);
 
             rotation += 0.5f;
             glfwSwapBuffers(window->getWindow());

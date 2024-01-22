@@ -9,8 +9,9 @@
 #include <memory>
 #include <map>
 
-#include "Mesh.hpp"
 #include "../../util/Result.hpp"
+#include "Mesh.hpp"
+
 namespace nebula {
     class MeshLoader {
     public:

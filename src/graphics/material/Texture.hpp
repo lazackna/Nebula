@@ -6,12 +6,14 @@
 #define NEBULA_MAIN_TEXTURE_HPP
 
 #include <glad/glad.h>
+#include <glm/vec4.hpp>
 #include "filesystem"
+#include <vector>
 
 namespace nebula {
 
     class Texture {
-        GLuint textureId;
+        GLuint textureId = -1;
     public:
         enum class Filter
         {
@@ -31,6 +33,10 @@ namespace nebula {
         explicit Texture(const std::filesystem::path& filePath, Wrap wrapS = Wrap::Repeat, Wrap wrapT = Wrap::Repeat);
 
         void bind() const;
+        static void unbind();
+
+        explicit Texture(const glm::vec4& color);
+        explicit Texture(const std::vector<glm::vec4>& colors, int width, int height);
     };
 
 } // nebula

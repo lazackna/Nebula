@@ -3,42 +3,50 @@
 //
 
 #include "Mesh.hpp"
-
+#include "../../shaders/Shader.hpp"
 
 namespace nebula {
-    Mesh::Primitive::Primitive(std::vector<Vertex>& vertices, const std::string &name) : name(name){
-        size = vertices.size();
-        setupMesh(vertices);
+    Mesh::Primitive::Primitive(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
+                               const Material &material, const std::string &name) : name(name), size(vertices.size()), material(material) {
+        setupMesh(vertices, indices);
     }
 
-    void Mesh::Primitive::setupMesh(std::vector<Vertex>& vertices) {
+    void Mesh::Primitive::setupMesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices) {
         vao = VAO::create();
         vbo = VBO::create(vertices);
+        ebo = EBO::create(indices);
         vao->bind();
         vbo->bind();
+        ebo->bind();
 
-        vao->addVertexBufferLayout(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
-        vao->addVertexBufferLayout(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, normal));
-        vao->addVertexBufferLayout(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texcoord));
-        vao->addVertexBufferLayout(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
+        vao->addVertexBufferLayout(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
+        vao->addVertexBufferLayout(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, normal));
+        vao->addVertexBufferLayout(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, texcoord));
+        vao->addVertexBufferLayout(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, color));
 
         vao->unbind();
         vbo->unbind();
+        ebo->unbind();
     }
 
-    void Mesh::Primitive::draw() {
+    void Mesh::Primitive::draw(Shader &shader) {
+
+        material.use(shader);
+        shader.use();
+
         vao->bind();
-        glDrawArrays(GL_TRIANGLES, 0, size);
+        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(ebo->getSize()), GL_UNSIGNED_INT, nullptr);
         vao->unbind();
     }
 
-    Mesh::Mesh(std::vector<Vertex> vertices, const std::string &name) {
-        primitives.push_back(std::make_unique<Primitive>(vertices, name));
-    }
-
-    void Mesh::draw() {
+    void Mesh::draw(Shader &shader) {
         for (const auto &item: primitives) {
-            item->draw();
+            item->draw(shader);
         }
     }
+
+    void Mesh::addPrimitive(std::unique_ptr<Primitive> primitive) {
+        primitives.push_back(std::move(primitive));
+    }
+
 } // nebula

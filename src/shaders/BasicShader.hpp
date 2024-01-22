@@ -18,13 +18,13 @@ namespace nebula {
     public:
         explicit BasicShader(const std::string &shader);
 
-        void setModelMatrix(const glm::mat4 &modelMatrix);
+        void setModelMatrix(const glm::mat4 &modelMatrix) override;
 
-        void setProjectionMatrix(const glm::mat4 &projectionMatrix);
+        void setProjectionMatrix(const glm::mat4 &projectionMatrix) override;
 
-        void setViewMatrix(const glm::mat4 &viewMatrix);
+        void setViewMatrix(const glm::mat4 &viewMatrix) override;
 
-        void setNormalMatrix(const glm::mat3 &normalMatrix);
+        void setMaterial(const Material &material) override;
     };
 
 } // nebula

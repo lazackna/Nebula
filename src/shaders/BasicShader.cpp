@@ -22,4 +22,8 @@ namespace nebula {
     }
 
     BasicShader::BasicShader(const std::string &shader) : Shader(shader), projectionMatrix(1.0f), modelMatrix(1.0f), viewMatrix(1.0f) {}
+
+    void BasicShader::setMaterial(const Material &material) {
+
+    }
 } // nebula
