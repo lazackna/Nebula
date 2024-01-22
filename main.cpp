@@ -3,7 +3,6 @@
 //
 #include "src/api/Nebula.hpp"
 
-#include "entt/entt.hpp"
 #include "src/api/ecs/Registry.hpp"
 
 using namespace nebula;
