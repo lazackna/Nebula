@@ -17,7 +17,7 @@ namespace nebula {
     public:
         virtual ~MeshLoader() = default;
 
-        virtual Result<std::unique_ptr<Mesh>, std::runtime_error> load(const std::filesystem::path& path) = 0;
+        virtual std::shared_ptr<Mesh> load(const std::filesystem::path& path) = 0;
     };
 
     class MeshLoading {
@@ -36,7 +36,7 @@ namespace nebula {
             alternateLoaders[signature] = std::move(std::make_unique<T>(args...));
         }
 
-        Result<std::unique_ptr<Mesh>, std::runtime_error> load(const std::filesystem::path& path);
+        std::shared_ptr<Mesh> load(const std::filesystem::path& path);
 
     };
 } // nebula

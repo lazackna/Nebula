@@ -10,7 +10,7 @@ namespace nebula {
     Texture::Texture(const std::filesystem::path &filePath, Texture::Wrap wrapS, Texture::Wrap wrapT) {
         int width, height, nrChannels;
         unsigned char* data = stbi_load(filePath.string().c_str(), &width, &height, &nrChannels, 0);
-
+        stbi__vertical_flip(data, width, height, nrChannels);
         glGenTextures(1, &textureId);
         glBindTexture(GL_TEXTURE_2D, textureId);
 

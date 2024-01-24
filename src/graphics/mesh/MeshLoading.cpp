@@ -7,7 +7,7 @@
 namespace nebula {
 
     MeshLoading* MeshLoading::instance;
-    Result<std::unique_ptr<Mesh>, std::runtime_error> MeshLoading::load(const std::filesystem::path &path) {
+    std::shared_ptr<Mesh> MeshLoading::load(const std::filesystem::path &path) {
         auto signature = path.extension().string();
 
         if(alternateLoaders.contains(signature)) {

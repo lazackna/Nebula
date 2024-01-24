@@ -14,25 +14,30 @@
 
 namespace nebula {
 
-    Result<std::unique_ptr<Mesh>, std::runtime_error> AssimpMeshLoader::load(const std::filesystem::path &path) {
+    std::shared_ptr<Mesh> AssimpMeshLoader::load(const std::filesystem::path &path) {
+
+        auto mesh = std::make_shared<Mesh>();
+
         Assimp::Importer importer;
         const aiScene *scene = importer.ReadFile(path.string().c_str(),
                                                  aiProcess_Triangulate | aiProcess_GenSmoothNormals |
                                                  aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            return {std::runtime_error("Could not load model")};
+            return mesh;
         }
-        auto mesh = std::make_unique<Mesh>();
+
         processNode(*mesh, scene->mRootNode, scene);
+
+        return mesh;
     }
 
-    void AssimpMeshLoader::processNode(Mesh& mesh, aiNode *node, const aiScene *scene) {
+    void AssimpMeshLoader::processNode(Mesh& mesh, aiNode *node, const aiScene *scene) { // NOLINT(*-no-recursion)
         for(int i = 0; i < node->mNumMeshes; ++i) {
             aiMesh* primitive = scene->mMeshes[node->mMeshes[i]];
 
             //load mesh here
-            mesh.addPrimitive(processPrimitive(mesh, primitive, scene));
+            mesh.addPrimitive(processPrimitive(primitive, scene));
         }
 
         for(unsigned int i = 0; i < node->mNumChildren; i++)
@@ -41,7 +46,7 @@ namespace nebula {
         }
     }
 
-    std::unique_ptr<Mesh::Primitive> AssimpMeshLoader::processPrimitive(Mesh& mesh, aiMesh *primitive, const aiScene *scene) {
+    std::unique_ptr<Mesh::Primitive> AssimpMeshLoader::processPrimitive(aiMesh *primitive, const aiScene *scene) {
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
         std::vector<Texture> textures;
@@ -67,37 +72,49 @@ namespace nebula {
                 indices.push_back(face.mIndices[j]);
         }
 
-        aiMaterial* material = scene->mMaterials[primitive->mMaterialIndex];
+        Material material;
+        aiMaterial* aiMat = scene->mMaterials[primitive->mMaterialIndex];
 
-        auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-        Material m;
-        m.addTexture(TextureType::ALBEDO, diffuseMaps[0]);
+        processMaterial(aiMat, material);
 
-
-        return std::unique_ptr<Mesh::Primitive>(vertices, indices, m, " ");
+        return std::make_unique<Mesh::Primitive>(vertices, indices, material, " ");
     }
 
-    std::vector<std::shared_ptr<Texture>>
-    AssimpMeshLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string typeName) {
-        std::vector<std::shared_ptr<Texture>> textures;
+    void AssimpMeshLoader::processMaterial(aiMaterial *aiMat, Material &material) {
+        processTextures(aiMat, material);
+    }
 
-        for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
-            aiString str;
-            mat->GetTexture(type, i, &str);
-            bool skip = false;
-
-            //Check if we already loaded the texture
-//            for (unsigned int j = 0; j < textures_loaded.size(); j++) {
-//                if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0) {
-//                }
-//
-//            }
-
-            if(!skip) {
-                textures.emplace_back(std::make_shared<Texture>(str.C_Str()));
+    void AssimpMeshLoader::processTextures(aiMaterial *aiMat, Material &material) {
+        for (unsigned int i = 0; i < aiMat->GetTextureCount(aiTextureType_DIFFUSE); ++i) {
+            aiString path;
+            if (aiMat->GetTexture(aiTextureType_DIFFUSE, i, &path) == AI_SUCCESS) {
+                std::shared_ptr<Texture> texture = std::make_shared<Texture>(path.C_Str());
+                material.addTexture(TextureType::ALBEDO, texture);
             }
         }
-
-        return textures;
     }
+//
+//    std::vector<std::shared_ptr<Texture>>
+//    AssimpMeshLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string typeName) {
+//        std::vector<std::shared_ptr<Texture>> textures;
+//
+//        for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
+//            aiString str;
+//            mat->GetTexture(type, i, &str);
+//            bool skip = false;
+//
+//            //Check if we already loaded the texture
+////            for (unsigned int j = 0; j < textures_loaded.size(); j++) {
+////                if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0) {
+////                }
+////
+////            }
+//
+//            if(!skip) {
+//                textures.emplace_back(std::make_shared<Texture>(str.C_Str()));
+//            }
+//        }
+//
+//        return textures;
+//    }
 } // nebula

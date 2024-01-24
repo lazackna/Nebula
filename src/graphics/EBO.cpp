@@ -31,4 +31,8 @@ namespace nebula {
     size_t EBO::getSize() const {
         return size;
     }
+
+    EBO::~EBO() {
+        glDeleteBuffers(1, &id);
+    }
 } // nebula

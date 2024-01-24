@@ -16,10 +16,12 @@ namespace nebula {
     class AssimpMeshLoader : public MeshLoader {
     private:
         void processNode(Mesh& mesh, aiNode* node, const aiScene* scene);
-        static std::unique_ptr<Mesh::Primitive> processPrimitive(Mesh& mesh, aiMesh* primitive, const aiScene* scene);
-        static std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string typeName);
+        static std::unique_ptr<Mesh::Primitive> processPrimitive(aiMesh* primitive, const aiScene* scene);
+        static void processMaterial(aiMaterial* aiMat, Material& material);
+        static void processTextures(aiMaterial* aiMat, Material& material);
+        //static std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string typeName);
     public:
-        Result<std::unique_ptr<Mesh>, std::runtime_error> load(const std::filesystem::path &path) override;
+        std::shared_ptr<Mesh> load(const std::filesystem::path &path) override;
     };
 
 } // nebula

@@ -19,7 +19,7 @@ namespace nebula {
 
     public:
         explicit EBO(const std::vector<unsigned int>& indices);
-
+        ~EBO();
         size_t getSize() const;
 
         void bind() const;

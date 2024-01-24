@@ -19,7 +19,7 @@ private:
     Tag tag;
 
 public:
-    Result(const T& val) : value(val), tag(Tag::Ok) {}
+    Result(const T& val) : value(std::move(val)), tag(Tag::Ok) {}
 
     Result(const E& err) : value(err), tag(Tag::Err) {}
 
