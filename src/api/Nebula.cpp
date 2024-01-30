@@ -184,9 +184,9 @@ namespace nebula {
         shader->use();
 
         auto meshLoader = MeshLoading(std::make_unique<AssimpMeshLoader>());
-        auto mesh = meshLoader.load(R"(C:\Users\User\Desktop\TI_Avans\Jaar 3\VisualisatieTechnieken\Eindopdracht\pbrEngine\Code\assets\models\ballBrick\brickBall.obj)");
+        auto mesh = meshLoader.load(R"(resources/models/cube/cube.obj)");
         //Mesh mesh = Mesh(std::move(createCube()), "test");
-        Texture texture = Texture("tex.png");
+        //Texture texture = Texture("tex.png");
 //        //Texture texture = Texture(glm::vec4(1,1,1,1));
 //        std::vector<glm::vec4> colors ={glm::vec4(1,0,0,1), glm::vec4(0,1,0,1), glm::vec4(0,0,1,1), glm::vec4(1,1,0,1)};
 //        Texture texture = Texture(colors, 2, 2);
