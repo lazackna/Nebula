@@ -2,6 +2,7 @@
 // Created by Jasper on 1/19/2024.
 //
 
+#include <iostream>
 #include "Mesh.hpp"
 #include "../../shaders/Shader.hpp"
 
@@ -37,6 +38,10 @@ namespace nebula {
         vao->bind();
         glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(ebo->getSize()), GL_UNSIGNED_INT, nullptr);
         vao->unbind();
+//        glBindVertexArray(0);
+//        glUseProgram(0);
+//        glActiveTexture(0);
+//        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void Mesh::draw(Shader &shader) {

@@ -14,4 +14,8 @@ namespace nebula {
     void Material::addTexture(TextureType type, const std::shared_ptr<Texture>& texture) {
         textureMap.insert(std::pair<TextureType, std::shared_ptr<Texture>>(type, texture));
     }
+
+    const std::map<TextureType, std::shared_ptr<Texture>> &Material::getTextureMap() const {
+        return textureMap;
+    }
 } // nebula

@@ -20,7 +20,7 @@
 #include "../graphics/VBO.hpp"
 #include "../graphics/mesh/Mesh.hpp"
 #include "../graphics/mesh/MeshLoading.hpp"
-#include "../graphics/mesh/loaders/AssimpMeshLoader.hpp"
+#include "../graphics/mesh/loaders/GltbLoader.hpp"
 #include "../util/glUtil.hpp"
 
 #ifdef WIN32
@@ -109,7 +109,7 @@ namespace nebula {
     void Nebula::framebufferResizeCallback(GLFWwindow *window, int width, int height) {
         glViewport(0, 0, width, height);
     }
-    bool enableTexture = false;
+    bool enableTexture = true;
     void Nebula::onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, true);
@@ -183,13 +183,8 @@ namespace nebula {
         std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
         shader->use();
 
-        auto meshLoader = MeshLoading(std::make_unique<AssimpMeshLoader>());
-        auto mesh = meshLoader.load(R"(resources/models/cube/cube.obj)");
-        //Mesh mesh = Mesh(std::move(createCube()), "test");
-        //Texture texture = Texture("tex.png");
-//        //Texture texture = Texture(glm::vec4(1,1,1,1));
-//        std::vector<glm::vec4> colors ={glm::vec4(1,0,0,1), glm::vec4(0,1,0,1), glm::vec4(0,0,1,1), glm::vec4(1,1,0,1)};
-//        Texture texture = Texture(colors, 2, 2);
+        auto meshLoader = MeshLoading(std::make_unique<GltbLoader>());
+        auto mesh = meshLoader.load(R"(resources/models/bottle/bottle.glb)");
 
         float rotation = 0;
 
@@ -210,6 +205,8 @@ namespace nebula {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            shader->use();
+
             //projection
             int viewport[4];
             glGetIntegerv(GL_VIEWPORT, viewport);
@@ -224,9 +221,6 @@ namespace nebula {
             glm::mat4 model = glm::mat4(1);
             rotate(model, glm::vec3(rotation,rotation,rotation));
             shader->setModelMatrix(model);
-
-            //texture.bind();
-            //shader->setUniform("ourTexture", enableTexture);
 
             mesh->draw(*shader);
 

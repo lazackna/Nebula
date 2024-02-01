@@ -27,9 +27,13 @@ find_package(glm CONFIG REQUIRED)
 list(APPEND LIBRARIES glm::glm)
 list(APPEND INCLUDE_DIRS ${GLM_INCLUDE_DIRS})
 
-find_package(assimp CONFIG REQUIRED)
-list(APPEND LIBRARIES assimp::assimp)
-list(APPEND INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
+find_package(nlohmann_json CONFIG REQUIRED)
+list(APPEND LIBRARIES nlohmann_json::nlohmann_json)
+list(APPEND INCLUDE_DIRS ${NLOHMANN_INCLUDE_DIRS})
+
+find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
+message(${TINYGLTF_INCLUDE_DIRS})
+list(APPEND INCLUDE_DIRS ${TINYGLTF_INCLUDE_DIRS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE "${LIBRARIES}")

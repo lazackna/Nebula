@@ -30,12 +30,15 @@ namespace nebula {
             RepeatMirrored = GL_MIRRORED_REPEAT
         };
 
+        std::string name;
+
         explicit Texture(const std::filesystem::path& filePath, Wrap wrapS = Wrap::Repeat, Wrap wrapT = Wrap::Repeat);
 
-        void bind() const;
+        void bind(int unit = 0) const;
         static void unbind();
 
         explicit Texture(const glm::vec4& color);
+        explicit Texture(std::vector<unsigned char>& data, int width, int height, GLenum format = GL_RGBA, GLenum type = GL_UNSIGNED_BYTE);
         explicit Texture(const std::vector<glm::vec4>& colors, int width, int height);
     };
 

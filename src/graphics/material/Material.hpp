@@ -22,6 +22,8 @@ namespace nebula {
 
         void use(Shader& shader) const;
         void addTexture(TextureType type, const std::shared_ptr<Texture>& texture);
+
+        const std::map<TextureType, std::shared_ptr<Texture>> &getTextureMap() const;
     };
 
 } // nebula
