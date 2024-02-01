@@ -5,7 +5,6 @@
 #ifndef NEBULA_MAIN_VAO_HPP
 #define NEBULA_MAIN_VAO_HPP
 
-#include <glad/glad.h>
 #include <memory>
 #include <vector>
 #include "Vertex.hpp"
@@ -26,8 +25,8 @@ namespace nebula {
 
         static void unbind();
 
-        void addVertexBufferLayout(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
-                                   const GLvoid *pointer) const;
+        void addVertexBufferLayout(unsigned int index, int size, unsigned int type, unsigned char normalized, int stride,
+                                   const void *pointer) const;
 
         static Vao create();
     };

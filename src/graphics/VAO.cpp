@@ -4,6 +4,8 @@
 
 #include "VAO.hpp"
 
+#include <glad/glad.h>
+
 namespace nebula {
 
     void VAO::bind() const {
@@ -22,8 +24,8 @@ namespace nebula {
         glDeleteVertexArrays(1, &id);
     }
 
-    void VAO::addVertexBufferLayout(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
-                                    const GLvoid *pointer) const {
+    void VAO::addVertexBufferLayout(unsigned int index, int size, unsigned int type, unsigned char normalized, int stride,
+                                    const void *pointer) const {
         bind();
         glEnableVertexAttribArray(index);
         glVertexAttribPointer(index, size, type, normalized, stride, pointer);

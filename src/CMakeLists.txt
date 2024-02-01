@@ -35,5 +35,7 @@ find_path(TINYGLTF_INCLUDE_DIRS "tiny_gltf.h")
 message(${TINYGLTF_INCLUDE_DIRS})
 list(APPEND INCLUDE_DIRS ${TINYGLTF_INCLUDE_DIRS})
 
+list(APPEND INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libIncludes)
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE "${LIBRARIES}")

@@ -5,7 +5,7 @@
 #ifndef NEBULA_MAIN_TEXTURE_HPP
 #define NEBULA_MAIN_TEXTURE_HPP
 
-#include <glad/glad.h>
+#include "../../libIncludes/glad.hpp"
 #include <glm/vec4.hpp>
 #include "filesystem"
 #include <vector>
@@ -13,7 +13,7 @@
 namespace nebula {
 
     class Texture {
-        GLuint textureId = -1;
+        unsigned int textureId = -1;
     public:
         enum class Filter
         {
@@ -38,7 +38,7 @@ namespace nebula {
         static void unbind();
 
         explicit Texture(const glm::vec4& color);
-        explicit Texture(std::vector<unsigned char>& data, int width, int height, GLenum format = GL_RGBA, GLenum type = GL_UNSIGNED_BYTE);
+        explicit Texture(std::vector<unsigned char>& data, int width, int height, unsigned int format = GL_RGBA, unsigned int type = GL_UNSIGNED_BYTE);
         explicit Texture(const std::vector<glm::vec4>& colors, int width, int height);
     };
 

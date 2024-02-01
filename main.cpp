@@ -1,10 +1,15 @@
 //
 // Created by User on 12/24/2023.
 //
+#include <iostream>
 #include "src/api/Nebula.hpp"
 
 #include "src/api/ecs/Registry.hpp"
+//#include "src/graphics/mesh/MeshLoading.hpp"
+//#include "src/Components/MeshComponent.hpp"
 
+#define STB_INCLUDE_IMPLEMENTATION
+#include "stb_include.h"
 using namespace nebula;
 
 struct e {
@@ -17,12 +22,13 @@ int main() {
     NebulaOptions options(800, 600, "Nebula");
     Nebula engine = Nebula(options);
 
+    //auto& meshLoader = MeshLoading::getInstance();
 
+
+    Registry reg;
+    auto o = reg.createGameObject();
+    //o.lock()->addComponent<MeshComponent>(meshLoader.load("resources/models/bottle/bottle.glb"));
     engine.start();
-//    Registry reg;
-//    auto o = reg.createGameObject();
-//    o.lock()->addComponent<Test>();
-
     return 0;
 }
 
