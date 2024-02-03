@@ -5,8 +5,8 @@
 #include "src/api/Nebula.hpp"
 
 #include "src/api/ecs/Registry.hpp"
-//#include "src/graphics/mesh/MeshLoading.hpp"
-//#include "src/Components/MeshComponent.hpp"
+#include "src/graphics/mesh/MeshLoading.hpp"
+#include "src/Components/MeshComponent.hpp"
 
 #define STB_INCLUDE_IMPLEMENTATION
 #include "stb_include.h"

@@ -8,7 +8,6 @@
 #include <string>
 #include <memory>
 #include <functional>
-#include <GLFW/glfw3.h>
 
 #include "NebulaOptions.hpp"
 #include "../Window.hpp"

@@ -18,7 +18,7 @@ namespace nebula {
         std::shared_ptr<Texture> imageToTexture(tinygltf::Image& image);
         void LoadTexture(tinygltf::Model& model, Material& material, int imageIndex, TextureType textureType, glm::vec4 fallbackColor);
     public:
-        GltbLoader() = default;
+        GltbLoader();
         std::shared_ptr<Mesh> load(const std::filesystem::path &path) override;
     };
 

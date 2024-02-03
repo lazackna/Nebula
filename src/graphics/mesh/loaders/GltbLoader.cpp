@@ -173,4 +173,8 @@ namespace nebula {
 
         return std::make_shared<Texture>(image.image, image.width, image.height, format, type);
     }
+
+    GltbLoader::GltbLoader() : MeshLoader({".gltb", ".glb"}){
+
+    }
 } // nebula

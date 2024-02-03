@@ -5,21 +5,18 @@
 #ifndef GLENGINE_WINDOW_HPP
 #define GLENGINE_WINDOW_HPP
 
-#include <GLFW/glfw3.h>
 #include <memory>
 
 
 #include "api/NebulaOptions.hpp"
 
+struct GLFWwindow;
+
 namespace nebula {
     class Window {
     private:
         struct GLFWwindowDestroyer {
-            void operator()(GLFWwindow* w) {
-                if(w) {
-                    glfwDestroyWindow(w);
-                }
-            }
+            void operator()(GLFWwindow* w);
         };
 
         std::unique_ptr<GLFWwindow, GLFWwindowDestroyer> window;

@@ -14,31 +14,21 @@
 
 namespace nebula {
     class MeshLoader {
+    protected:
+        const std::vector<std::string> extensions;
+
+        explicit MeshLoader(const std::vector<std::string>& extensions) : extensions(extensions){}
     public:
         virtual ~MeshLoader() = default;
 
         virtual std::shared_ptr<Mesh> load(const std::filesystem::path& path) = 0;
+
+        bool canLoad(const std::string& extension);
     };
 
-    class MeshLoading {
-        std::map<std::string, std::unique_ptr<MeshLoader>> alternateLoaders;
+    void registerMeshLoader(std::unique_ptr<MeshLoader>);
 
-        std::unique_ptr<MeshLoader> defaultLoader;
-
-        static MeshLoading* instance;
-    public:
-        explicit MeshLoading(std::unique_ptr<MeshLoader> defaultLoader);
-
-        static MeshLoading& getInstance();
-
-        template<class T, typename... Args> requires std::is_base_of_v<MeshLoader, T>
-        void registerMeshLoader(const std::string& signature, Args... args) {
-            alternateLoaders[signature] = std::move(std::make_unique<T>(args...));
-        }
-
-        std::shared_ptr<Mesh> load(const std::filesystem::path& path);
-
-    };
+    std::shared_ptr<Mesh> loadMesh(const std::filesystem::path& path);
 } // nebula
 
 #endif //NEBULA_MAIN_MESHLOADING_HPP

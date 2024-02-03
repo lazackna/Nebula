@@ -3,7 +3,11 @@
 //
 
 #include <utility>
+
+//include glad before glfw
 #include <glad/glad.h>
+
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 #include "Nebula.hpp"
@@ -94,7 +98,7 @@ namespace nebula {
 
         glfwSetFramebufferSizeCallback(window->getWindow(), framebufferResizeCallback);
 
-        auto meshLoader = MeshLoading(std::make_unique<GltbLoader>());
+        registerMeshLoader(std::make_unique<GltbLoader>());
     }
 
     void Nebula::errorCallback(int error, const char *description) {
@@ -123,11 +127,10 @@ namespace nebula {
 
         FpsCam camera(window->getWindow());
 
-        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/wiggle");
+        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
         shader->use();
 
-        auto& meshLoader = MeshLoading::getInstance();
-        auto mesh = meshLoader.load(R"(resources/models/bottle/bottle.glb)");
+        auto mesh = loadMesh(R"(resources/models/bottle/bottle.glb)");
 
         float rotation = 0;
         auto currentTime = static_cast<float>(glfwGetTime());

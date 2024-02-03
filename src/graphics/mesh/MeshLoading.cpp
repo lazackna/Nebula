@@ -4,35 +4,29 @@
 
 #include "MeshLoading.hpp"
 
+#include <algorithm>
+
 namespace nebula {
 
-    MeshLoading* MeshLoading::instance;
-    std::shared_ptr<Mesh> MeshLoading::load(const std::filesystem::path &path) {
-        auto signature = path.extension().string();
+    std::vector<std::unique_ptr<MeshLoader>> meshLoaders;
 
-        if(alternateLoaders.contains(signature)) {
-            return alternateLoaders[signature]->load(path);
-        } else {
-            return defaultLoader->load(path);
-        }
+    void registerMeshLoader(std::unique_ptr<MeshLoader> loader) {
+        meshLoaders.push_back(std::move(loader));
     }
 
-    MeshLoading &MeshLoading::getInstance() {
+    std::shared_ptr<Mesh> loadMesh(const std::filesystem::path &path) {
+        auto extension = path.extension().string();
 
-        if(!instance) {
-            throw std::runtime_error("Class Meshloading was not initialized");
+        for (const auto &item: meshLoaders) {
+            if(item->canLoad(extension)) {
+                return item->load(path);
+            }
         }
 
-        return *instance;
+        return nullptr;
     }
 
-    MeshLoading::MeshLoading(std::unique_ptr<MeshLoader> defaultLoader) {
-        if(instance) {
-            throw std::runtime_error("Class Meshloading was already initialized");
-        }
-
-        this->defaultLoader = std::move(defaultLoader);
-        instance = this;
+    bool MeshLoader::canLoad(const std::string &extension) {
+        return std::find(extensions.begin(), extensions.end(), extension) != extensions.end();
     }
-
 } // nebula

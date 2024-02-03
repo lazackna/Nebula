@@ -4,6 +4,8 @@
 
 #include "Window.hpp"
 
+#include <GLFW/glfw3.h>
+
 namespace nebula {
     Window::Window(const NebulaOptions& options) {
         window = std::unique_ptr<GLFWwindow, GLFWwindowDestroyer>(
@@ -12,5 +14,11 @@ namespace nebula {
 
     GLFWwindow *Window::getWindow() {
         return &*window;
+    }
+
+    void Window::GLFWwindowDestroyer::operator()(GLFWwindow *w) {
+        if(w) {
+            glfwDestroyWindow(w);
+        }
     }
 }
