@@ -10,7 +10,7 @@
 namespace nebula {
     Texture::Texture(const std::filesystem::path &filePath, Texture::Wrap wrapS, Texture::Wrap wrapT) {
         int width, height, nrChannels;
-        unsigned char* data = stbi_load(filePath.string().c_str(), &width, &height, &nrChannels, 0);
+        unsigned char *data = stbi_load(filePath.string().c_str(), &width, &height, &nrChannels, 0);
         stbi__vertical_flip(data, width, height, nrChannels);
         glGenTextures(1, &textureId);
         glBindTexture(GL_TEXTURE_2D, textureId);
@@ -40,7 +40,8 @@ namespace nebula {
         glGenTextures(1, &textureId);
         glBindTexture(GL_TEXTURE_2D, textureId);
 
-        stbi_uc imgData[4] = {(stbi_uc)(color.r * 255), (stbi_uc)(color.g * 255), (stbi_uc)(color.b * 255), (stbi_uc)(color.a * 255)};
+        stbi_uc imgData[4] = {(stbi_uc) (color.r * 255), (stbi_uc) (color.g * 255), (stbi_uc) (color.b * 255),
+                              (stbi_uc) (color.a * 255)};
         glTexImage2D(GL_TEXTURE_2D,
                      0, //level
                      GL_RGBA, //internal format
@@ -63,7 +64,7 @@ namespace nebula {
         glBindTexture(GL_TEXTURE_2D, textureId);
         std::vector<stbi_uc> imgData;
 
-        for(auto& c : colors) {
+        for (auto &c: colors) {
             imgData.push_back(static_cast<stbi_uc>(c.r * 255));
             imgData.push_back(static_cast<stbi_uc>(c.g * 255));
             imgData.push_back(static_cast<stbi_uc>(c.b * 255));
@@ -101,5 +102,21 @@ namespace nebula {
                      format, type, &data.at(0));
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    Texture::Texture(const Fbo &fbo) {
+        fbo->bind();
+
+        glGenTextures(1, &textureId);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fbo->getWidth(), fbo->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        fbo->unbind();
     }
 } // nebula

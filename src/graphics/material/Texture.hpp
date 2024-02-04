@@ -10,6 +10,8 @@
 #include "filesystem"
 #include <vector>
 
+#include "../buffersObjects/FBO.hpp"
+
 namespace nebula {
 
     class Texture {
@@ -40,6 +42,7 @@ namespace nebula {
         explicit Texture(const glm::vec4& color);
         explicit Texture(std::vector<unsigned char>& data, int width, int height, unsigned int format = GL_RGBA, unsigned int type = GL_UNSIGNED_BYTE);
         explicit Texture(const std::vector<glm::vec4>& colors, int width, int height);
+        explicit Texture(const Fbo& fbo);
     };
 
 } // nebula

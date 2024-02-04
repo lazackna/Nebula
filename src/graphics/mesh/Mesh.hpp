@@ -9,9 +9,9 @@
 #include <string>
 #include "../Vertex.hpp"
 
-#include "../VAO.hpp"
-#include "../VBO.hpp"
-#include "../EBO.hpp"
+#include "../buffersObjects/VAO.hpp"
+#include "../buffersObjects/VBO.hpp"
+#include "../buffersObjects/EBO.hpp"
 
 #include "../material/Material.hpp"
 

@@ -20,7 +20,7 @@
 
 #include "../util/math.hpp"
 #include "../graphics/material/Texture.hpp"
-#include "../graphics/VBO.hpp"
+#include "../graphics/buffersObjects/VBO.hpp"
 #include "../graphics/mesh/Mesh.hpp"
 #include "../graphics/mesh/MeshLoading.hpp"
 #include "../graphics/mesh/loaders/GltbLoader.hpp"

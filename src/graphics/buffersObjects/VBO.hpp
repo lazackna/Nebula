@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <vector>
-#include "Vertex.hpp"
+#include "../Vertex.hpp"
 
 namespace nebula {
     class VBO;
