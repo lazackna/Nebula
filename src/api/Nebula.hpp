@@ -12,6 +12,8 @@
 #include "NebulaOptions.hpp"
 #include "../Window.hpp"
 
+#include "input/Input.hpp"
+
 
 namespace nebula {
 
@@ -23,6 +25,8 @@ namespace nebula {
 
         static Nebula* instance;
         std::optional<ErrorCallback> onError;
+
+        std::unique_ptr<Input> input;
     private:
         void initialize();
 
@@ -30,6 +34,10 @@ namespace nebula {
         static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
         static void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+        void update(double deltaTime);
+        void draw();
+
     public:
         explicit Nebula(NebulaOptions  options);
 

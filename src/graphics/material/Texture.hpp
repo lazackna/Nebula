@@ -43,6 +43,8 @@ namespace nebula {
         explicit Texture(std::vector<unsigned char>& data, int width, int height, unsigned int format = GL_RGBA, unsigned int type = GL_UNSIGNED_BYTE);
         explicit Texture(const std::vector<glm::vec4>& colors, int width, int height);
         explicit Texture(const Fbo& fbo);
+
+        unsigned int getTextureId() const;
     };
 
 } // nebula

@@ -119,4 +119,8 @@ namespace nebula {
         glBindTexture(GL_TEXTURE_2D, 0);
         fbo->unbind();
     }
+
+    unsigned int Texture::getTextureId() const {
+        return textureId;
+    }
 } // nebula

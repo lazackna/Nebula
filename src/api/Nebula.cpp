@@ -26,6 +26,10 @@
 #include "../graphics/mesh/loaders/GltbLoader.hpp"
 #include "../util/glUtil.hpp"
 
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
+
 #ifdef WIN32
 
 void GLAPIENTRY onDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,
@@ -65,9 +69,10 @@ namespace nebula {
             exit(EXIT_FAILURE);
         }
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
         window = std::make_unique<Window>(options);
 
         if (!window) {
@@ -85,20 +90,34 @@ namespace nebula {
         }
 
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
+        //glDepthFunc(GL_LESS);
         //glEnable(GL_BLEND);
 
         glViewport(0, 0, options.width, options.height);
 
-        //if(glDebugMessageCallback) {
-        //glEnable(GL_DEBUG_OUTPUT);
-        //glDebugMessageCallback(&onDebug, nullptr);
-            //glEnable(GL_DEBUG_OUTPUT);
-        //}
+        if(glDebugMessageCallback) {
+        glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback(&onDebug, nullptr);
+            glEnable(GL_DEBUG_OUTPUT);
+        }
 
         glfwSetFramebufferSizeCallback(window->getWindow(), framebufferResizeCallback);
 
         registerMeshLoader(std::make_unique<GltbLoader>());
+
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(window->getWindow(), true);
+
+        ImGui_ImplOpenGL3_Init("#version 400");
+
+        input = std::make_unique<Input>(window->getWindow());
     }
 
     void Nebula::errorCallback(int error, const char *description) {
@@ -132,13 +151,17 @@ namespace nebula {
 
         auto mesh = loadMesh(R"(resources/models/bottle/bottle.glb)");
 
+        Fbo fbo = FBO::create(options.width, options.height);
+        Texture renderTexture = Texture(fbo);
+
+        auto screenShader = std::make_unique<BasicShader>("resources/simple");
         float rotation = 0;
-        auto currentTime = static_cast<float>(glfwGetTime());
-        float lastTime = currentTime;
+        auto currentTime = static_cast<double>(glfwGetTime());
+        double lastTime = currentTime;
         while (!glfwWindowShouldClose(window->getWindow())) {
 
-            currentTime = static_cast<float>(glfwGetTime());
-            float deltaTime = currentTime - lastTime;
+            currentTime = static_cast<double>(glfwGetTime());
+            double deltaTime = currentTime - lastTime;
             lastTime = currentTime;
 
             GLenum error = glGetError();
@@ -147,9 +170,13 @@ namespace nebula {
                 std::cout << "Got an error: " << error << "\n";
             }
 
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            update(deltaTime);
+            draw();
 
+            fbo->bind();
+            glEnable(GL_DEPTH_TEST);
+            glClearColor(1, 1, 1, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             shader->use();
 
             //projection
@@ -167,16 +194,41 @@ namespace nebula {
             rotate(model, glm::vec3(rotation,rotation,rotation));
             shader->setModelMatrix(model);
 
-            shader->setUniform("time", static_cast<float>(glfwGetTime()));
+            //first pass
+            mesh->draw(*shader);
+            fbo->unbind();
 
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glEnable(GL_DEPTH_TEST);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             mesh->draw(*shader);
 
-            //rotation += 0.5f;
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            ImGui::Begin("BufferInspector");
+            ImGui::SetWindowSize({static_cast<float>(options.width / 4) + 20, static_cast<float>(options.height / 4) + 20});
+            ImGui::Text("%s","ColorBuffer");
+            ImGui::Image((void*)(intptr_t)renderTexture.getTextureId(), ImVec2(options.width / 4,options.height / 4), ImVec2(0,0), ImVec2(1,-1));
+            ImGui::End();
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
             glfwSwapBuffers(window->getWindow());
             glfwPollEvents();
         }
 
         window = nullptr;
         glfwTerminate();
+    }
+
+    void Nebula::update(double deltaTime) {
+        input->update();
+    }
+
+    void Nebula::draw() {
+
     }
 } // nebula

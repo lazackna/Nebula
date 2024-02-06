@@ -17,5 +17,9 @@
   }, {
     "name" : "nlohmann-json",
     "version>=" : "3.11.3"
+  }, {
+    "name" : "imgui",
+    "version>=" : "1.89.9",
+    "features": ["glfw-binding", "opengl3-binding"]
   } ]
 }

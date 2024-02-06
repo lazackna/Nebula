@@ -7,9 +7,9 @@
 FpsCam::FpsCam(GLFWwindow* _window)
 {
 	window = _window;
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	if (glfwRawMouseMotionSupported())
-		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	//if (glfwRawMouseMotionSupported())
+		//glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 }
 
@@ -58,6 +58,12 @@ void FpsCam::update(float deltatime)
 		move(90, factor, deltatime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		move(-90, factor, deltatime);
+    if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+        position.y -= 100 * deltatime;
+    }
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        position.y += 100 * deltatime;
+    }
 }
 
 glm::vec3 FpsCam::getPosition()

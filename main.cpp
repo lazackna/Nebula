@@ -19,7 +19,7 @@ struct e {
 };
 
 int main() {
-    NebulaOptions options(800, 600, "Nebula");
+    NebulaOptions options(1280, 720, "Nebula");
     Nebula engine = Nebula(options);
 
     //auto& meshLoader = MeshLoading::getInstance();
