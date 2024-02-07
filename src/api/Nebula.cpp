@@ -153,16 +153,16 @@ namespace nebula {
 
         Fbo colorBuffer = FBO::create(options.width, options.height);
         auto colorShader = std::make_unique<BasicShader>("resources/pbr/colors");
-        colorShader->use();
+        //colorShader->use();
         Texture collorBufferTexture = Texture(colorBuffer);
-//        Fbo normalBuffer = FBO::create(options.width, options.height);
-//        Texture normalBufferTexture = Texture(normalBuffer);
-//        auto normalShader = std::make_unique<BasicShader>("resources/pbr/normals");
-//
-//        Fbo objectBuffer = FBO::create(options.width, options.height);
-//        Texture objectBufferTexture = Texture(objectBuffer);
-//        auto objectShader = std::make_unique<BasicShader>("resources/pbr/object");
+        Fbo normalBuffer = FBO::create(options.width, options.height);
+        Texture normalBufferTexture = Texture(normalBuffer);
+        auto normalShader = std::make_unique<BasicShader>("resources/pbr/normals");
 
+        Fbo objectBuffer = FBO::create(options.width, options.height);
+        Texture objectBufferTexture = Texture(objectBuffer);
+        auto objectShader = std::make_unique<BasicShader>("resources/pbr/object");
+        //TODO NOTE: uniforms can only be set on an active shader
         float rotation = 0;
         auto currentTime = static_cast<double>(glfwGetTime());
         double lastTime = currentTime;
@@ -181,51 +181,52 @@ namespace nebula {
             update(deltaTime);
             draw();
 
-            colorBuffer->bind();
+            camera.update(deltaTime);
+
             //projection
             int viewport[4];
             glGetIntegerv(GL_VIEWPORT, viewport);
-
             glm::mat4 projection = createPerspective(glm::radians(45.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.1f, 100.0f);
-            shader->setProjectionMatrix(projection);
-            colorShader->setProjectionMatrix(projection);
-            //normalShader->setProjectionMatrix(projection);
-            //objectShader->setProjectionMatrix(projection);
-            //view
-            camera.update(deltaTime);
-            shader->setViewMatrix(camera.getMatrix());
-            colorShader->setViewMatrix(camera.getMatrix());
-            //normalShader->setViewMatrix(camera.getMatrix());
-            //objectShader->setViewMatrix(camera.getMatrix());
-            //model/world
             glm::mat4 model = glm::mat4(1);
             rotate(model, glm::vec3(rotation,rotation,rotation));
-            shader->setModelMatrix(model);
-            colorShader->setModelMatrix(model);
-            //normalShader->setModelMatrix(model);
-            //objectShader->setModelMatrix(model);
 
-            //colorBuffer->bind();
+            shader->use();
+            shader->setProjectionMatrix(projection);
+            shader->setViewMatrix(camera.getMatrix());
+            shader->setModelMatrix(model);
+
+            colorShader->use();
+            colorShader->setProjectionMatrix(projection);
+            colorShader->setViewMatrix(camera.getMatrix());
+            colorShader->setModelMatrix(model);
+            colorBuffer->bind();
             glEnable(GL_DEPTH_TEST);
             glClearColor(0., 0., 0., 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             mesh->draw(*colorShader);
             colorBuffer->unbind();
 
+            normalShader->use();
+            normalShader->setProjectionMatrix(projection);
+            normalShader->setViewMatrix(camera.getMatrix());
+            normalShader->setModelMatrix(model);
+            normalBuffer->bind();
+            glEnable(GL_DEPTH_TEST);
+            glClearColor(0., 0., 0., 0.f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            mesh->draw(*normalShader);
+            normalBuffer->unbind();
 
-//            normalBuffer->bind();
-//            glEnable(GL_DEPTH_TEST);
-//            glClearColor(0., 0., 0., 0.f);
-//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//            mesh->draw(*normalShader);
-//            normalBuffer->unbind();
-//
-//            objectBuffer->bind();
-//            glEnable(GL_DEPTH_TEST);
-//            glClearColor(0., 0., 0., 0.f);
-//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//            mesh->draw(*objectShader);
-//            objectBuffer->unbind();
+            objectShader->use();
+            objectShader->setProjectionMatrix(projection);
+            objectShader->setViewMatrix(camera.getMatrix());
+            objectShader->setModelMatrix(model);
+            objectBuffer->bind();
+            glEnable(GL_DEPTH_TEST);
+            glClearColor(0., 0., 0., 0.f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            mesh->draw(*objectShader);
+            objectBuffer->unbind();
 
 
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -241,12 +242,15 @@ namespace nebula {
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            ImGui::Begin("BufferInspector");
-            ImGui::SetWindowSize({static_cast<float>(options.width / 4) + 20, static_cast<float>(options.height / 4) + 20});
-            ImGui::Text("%s","ColorBuffer");
+            ImGui::Begin("ColorInspector");
+            ImGui::SetWindowSize({static_cast<float>(options.width / 4) + 20, static_cast<float>(options.height) - 100});
             ImGui::Image((void*)(intptr_t)collorBufferTexture.getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
-            //ImGui::Image((void*)(intptr_t)normalBufferTexture.getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
-            //ImGui::Image((void*)(intptr_t)objectBufferTexture.getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
+            //ImGui::End();
+            //ImGui::Begin("NormalInspector");
+            ImGui::Image((void*)(intptr_t)normalBufferTexture.getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
+            //ImGui::End();
+            //ImGui::Begin("ObjectInspector");
+            ImGui::Image((void*)(intptr_t)objectBufferTexture.getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
             ImGui::End();
 
             ImGui::Render();
