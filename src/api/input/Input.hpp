@@ -13,19 +13,10 @@
 namespace nebula {
 
     class Input {
-        struct keyboardState {
-            std::bitset<GLFW_KEY_LAST> keys;
-        };
-
-        keyboardState currentState;
-        keyboardState previousState;
-
     public:
-        Input(GLFWwindow* window);
+        Input(GLFWwindow* window) {};
 
-        void update();
-
-        bool getKey(unsigned int key);
+//        bool getKey(unsigned int key);
     };
 
 } // nebula

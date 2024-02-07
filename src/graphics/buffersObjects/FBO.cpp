@@ -17,6 +17,8 @@ namespace nebula {
 
     void FBO::bind() {
         glBindFramebuffer(GL_FRAMEBUFFER, id);
+        GLenum drawBuffersColor[] = { GL_COLOR_ATTACHMENT0 };
+        glDrawBuffers(1, drawBuffersColor);
     }
 
     void FBO::unbind() {

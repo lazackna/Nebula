@@ -7,7 +7,7 @@
 FpsCam::FpsCam(GLFWwindow* _window)
 {
 	window = _window;
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if (glfwRawMouseMotionSupported())
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
@@ -43,12 +43,21 @@ void FpsCam::update(float deltatime)
 	float deltaX = (float)(lastY - y);
 
 	rotation.x -= (float)(lastY - y) / 300.0f;
+    if(rotation.x < glm::radians(-90.)) {
+        rotation.x = glm::radians(-90.);
+    } else if(rotation.x > glm::radians(90.)) {
+        rotation.x = glm::radians(90.);
+    }
 	rotation.y -= (float)(lastX - x) / 300.0f;
-
+//    if(rotation.y < -90) {
+//        rotation.y = -90;
+//    } else if(rotation.y > 90) {
+//        rotation.y = 90;
+//    }
 	lastX = x;
 	lastY = y;
 
-    float factor = 0.05f * 100;
+    float factor = 4;
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		move(0, factor, deltatime);
@@ -58,6 +67,12 @@ void FpsCam::update(float deltatime)
 		move(90, factor, deltatime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		move(-90, factor, deltatime);
+    if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+        position.y += factor * deltatime;
+    }
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        position.y -= factor * deltatime;
+    }
 }
 
 glm::vec3 FpsCam::getPosition()

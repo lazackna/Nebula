@@ -13,5 +13,5 @@ void main()
 
     outputColor *= texture2D(ourTexture, texcoord);
 
-    gl_FragColor = outputColor;
+    gl_FragColor = color;
 }

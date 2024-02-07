@@ -75,10 +75,12 @@ namespace nebula {
             std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
         }
 
-        glUseProgram(programId);
+        //glUseProgram(programId);
 
         glDeleteShader(vertexId);
         glDeleteShader(fragmentId);
+
+        valid = success;
     }
 
     unsigned int Shader::getProgramId() const {
