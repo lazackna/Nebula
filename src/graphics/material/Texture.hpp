@@ -35,6 +35,7 @@ namespace nebula {
         std::string name;
 
         explicit Texture(const std::filesystem::path& filePath, Wrap wrapS = Wrap::Repeat, Wrap wrapT = Wrap::Repeat);
+        ~Texture();
 
         void bind(int unit = 0) const;
         static void unbind();
@@ -42,9 +43,9 @@ namespace nebula {
         explicit Texture(const glm::vec4& color);
         explicit Texture(std::vector<unsigned char>& data, int width, int height, unsigned int format = GL_RGBA, unsigned int type = GL_UNSIGNED_BYTE);
         explicit Texture(const std::vector<glm::vec4>& colors, int width, int height);
-        explicit Texture(const Fbo& fbo);
+        explicit Texture(const Fbo &fbo, GLint internalFormat, GLenum format, GLenum type, GLenum attachment);
 
-        unsigned int getTextureId() const;
+        [[nodiscard]] unsigned int getTextureId() const;
     };
 
 } // nebula

@@ -26,6 +26,8 @@
 #include "../graphics/mesh/loaders/GltbLoader.hpp"
 #include "../util/glUtil.hpp"
 #include "../graphics/RenderingPass.hpp"
+#include "../graphics/buffersObjects/RBO.hpp"
+#include "../graphics/buffersObjects/GBuffer.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
@@ -149,28 +151,43 @@ namespace nebula {
         std::vector<RenderingPass> renderingPasses;
 
         mesh = loadMesh(R"(resources/models/cube/cube.glb)");
-        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
+//        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
+//        std::unique_ptr<BasicShader> gBufferShader = std::make_unique<BasicShader>("resources/deferred/gBuffer");
 
+        auto geometryPassShader = std::make_unique<BasicShader>("resources/deferred/gBuffer");
+        auto lightingPassShader = std::make_unique<BasicShader>("resources/deferred/gBuffer");
+        auto lightBoxShader = std::make_unique<BasicShader>("resources/deferred/gBuffer");
 
-        Fbo positionBuffer = FBO::create(options.width, options.height);
-        auto positionShader = std::make_unique<BasicShader>("resources/deferred/positions");
-        RenderingPass positionPass = RenderingPass(positionBuffer, *positionShader, "position");
+//        Fbo positionBuffer = FBO::create(options.width, options.height);
+//        Rbo positionRbo = RBO::create(positionBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+//        auto positionShader = std::make_unique<BasicShader>("resources/deferred/positions");
+//        RenderingPass positionPass = RenderingPass(positionBuffer, *positionShader, "position");
+//
+//        Fbo normalBuffer = FBO::create(options.width, options.height);
+//        Rbo normalRbo = RBO::create(normalBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+//        auto normalShader = std::make_unique<BasicShader>("resources/deferred/normals");
+//        RenderingPass normalPass = RenderingPass(normalBuffer, *normalShader, "normal");
+//
+//        Fbo colorBuffer = FBO::create(options.width, options.height);
+//        Rbo colorRbo = RBO::create(colorBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+//        auto colorShader = std::make_unique<BasicShader>("resources/deferred/colors");
+//        RenderingPass colorPass = RenderingPass(colorBuffer, *colorShader, "color");
 
-        Fbo normalBuffer = FBO::create(options.width, options.height);
-        auto normalShader = std::make_unique<BasicShader>("resources/deferred/normals");
-        RenderingPass normalPass = RenderingPass(normalBuffer, *normalShader, "normal");
-        normalBuffer->bind();
+        GBuffer gBuffer = GBuffer(options.width, options.height);
+        std::cout << "here\n";
+        gBuffer.addTextureAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0, "position");
+        std::cout << "here1\n";
+        gBuffer.addTextureAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT1, "normal");
+        std::cout << "here2\n";
+        gBuffer.addTextureAttachment(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT2, "albedoSpecular");
+        std::cout << "here3\n";
+        gBuffer.addRenderBuffer(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+        std::cout << "here4\n";
+        gBuffer.unbind();
 
-        Fbo colorBuffer = FBO::create(options.width, options.height);
-        auto colorShader = std::make_unique<BasicShader>("resources/deferred/colors");
-        RenderingPass colorPass = RenderingPass(colorBuffer, *colorShader, "color");
-
-//        unsigned int rbo;
-//        glGenRenderbuffers(1, &rbo);
-//        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-//        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, options.width, options.height); // use a single renderbuffer object for both a depth AND stencil buffer.
-//        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
-
+        lightingPassShader->setUniform("gPosition", 0);
+        lightingPassShader->setUniform("gNormal", 1);
+        lightingPassShader->setUniform("gAlbedoSpec", 2);
 
         //TODO NOTE: uniforms can only be set on an active shader
         float rotation = 0;
@@ -182,11 +199,7 @@ namespace nebula {
             double deltaTime = currentTime - lastTime;
             lastTime = currentTime;
 
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR) {
-                // Print or handle the error
-                std::cout << "Got an error: " << error << "\n";
-            }
+            checkGLError(__FILE__, __LINE__);
 
             update(deltaTime);
             draw();
@@ -200,9 +213,11 @@ namespace nebula {
             glm::mat4 model = glm::mat4(1);
             rotate(model, glm::vec3(rotation,rotation,rotation));
 
-            positionPass.render(camera, model, projection, *mesh);
-            normalPass.render(camera, model, projection, *mesh);
-            colorPass.render(camera, model, projection, *mesh);
+
+
+//            positionPass.render(camera, model, projection, *mesh);
+//            normalPass.render(camera, model, projection, *mesh);
+//            colorPass.render(camera, model, projection, *mesh);
 
 //            normalShader->use();
 //            normalShader->setProjectionMatrix(projection);
@@ -227,16 +242,26 @@ namespace nebula {
 //            colorBuffer->unbind();
 //
 //
+//            gBufferShader->use();
+//            gBufferShader->setProjectionMatrix(projection);
+//            gBufferShader->setViewMatrix(camera.getMatrix());
+//            gBufferShader->setModelMatrix(model);
+//            gBuffer.bind();
+//            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+//            glEnable(GL_DEPTH_TEST);
+//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//            mesh->draw(*gBufferShader);
+//            gBuffer.unbind();
 
-            shader->use();
-            shader->setProjectionMatrix(projection);
-            shader->setViewMatrix(camera.getMatrix());
-            shader->setModelMatrix(model);
-
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glEnable(GL_DEPTH_TEST);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            mesh->draw(*shader);
+//            shader->use();
+//            shader->setProjectionMatrix(projection);
+//            shader->setViewMatrix(camera.getMatrix());
+//            shader->setModelMatrix(model);
+//
+//            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+//            glEnable(GL_DEPTH_TEST);
+//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//            mesh->draw(*shader);
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
@@ -244,13 +269,18 @@ namespace nebula {
 
             ImGui::Begin("ColorInspector");
             ImGui::SetWindowSize({static_cast<float>(options.width / 4) + 20, static_cast<float>(options.height) - 100});
-            ImGui::Image((void*)(intptr_t)positionPass.getTexture().getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
-            //ImGui::End();
-            //ImGui::Begin("NormalInspector");
-            ImGui::Image((void*)(intptr_t)normalPass.getTexture().getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
-            //ImGui::End();
-            //ImGui::Begin("ObjectInspector");
-            ImGui::Image((void*)(intptr_t)colorPass.getTexture().getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
+//            auto& textures = gBuffer.getTextureAttachments();
+//
+//            for(auto& tex : textures) {
+//                ImGui::Image((void*)(intptr_t)tex.texture.getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
+//            }
+//            ImGui::Image((void*)(intptr_t)positionPass.getTexture().getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
+//            //ImGui::End();
+//            //ImGui::Begin("NormalInspector");
+//            ImGui::Image((void*)(intptr_t)normalPass.getTexture().getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
+//            //ImGui::End();
+//            //ImGui::Begin("ObjectInspector");
+//            ImGui::Image((void*)(intptr_t)colorPass.getTexture().getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
             ImGui::End();
 
             ImGui::Render();

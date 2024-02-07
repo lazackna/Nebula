@@ -5,7 +5,7 @@
 #include "RenderingPass.hpp"
 
 namespace nebula {
-    RenderingPass::RenderingPass(const Fbo &fbo, Shader &shader, const std::string& name) : fbo(fbo), texture(fbo) ,shader(shader) {
+    RenderingPass::RenderingPass(const Fbo &fbo, Shader &shader, const std::string& name) : fbo(fbo), texture(fbo, GL_RGBA16F, GL_RGB, GL_FLOAT, GL_COLOR_ATTACHMENT0) ,shader(shader) {
         texture.name = name;
     }
 
