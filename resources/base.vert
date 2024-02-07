@@ -12,7 +12,7 @@ out vec3 normal;
 void main()
 {
    position = a_position;
-   normal = a_normal;
+   normal = normalize(normalMatrix * a_normal);
    texCoord = a_texcoord;
    color = a_color;
 

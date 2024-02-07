@@ -17,7 +17,7 @@ out vec4 color;
 void main()
 {
     position = a_position;
-    normal = a_normal;
+    normal = normalize(normalMatrix * a_normal);;
     texcoord = a_texcoord;
     color = a_color;
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(a_position,1);

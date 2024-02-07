@@ -21,7 +21,7 @@ namespace nebula {
         FBO(int width, int height);
 
         ~FBO();
-        void bind();
+        void bind() const;
         static void unbind();
 
         static Fbo create(int width, int height);
