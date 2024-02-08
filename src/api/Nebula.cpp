@@ -151,7 +151,7 @@ namespace nebula {
         std::vector<RenderingPass> renderingPasses;
 
         mesh = loadMesh(R"(resources/models/cube/cube.glb)");
-//        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
+        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
 //        std::unique_ptr<BasicShader> gBufferShader = std::make_unique<BasicShader>("resources/deferred/gBuffer");
 
         auto geometryPassShader = std::make_unique<BasicShader>("resources/deferred/gBuffer");
@@ -181,10 +181,13 @@ namespace nebula {
         std::cout << "here2\n";
         gBuffer.addTextureAttachment(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT2, "albedoSpecular");
         std::cout << "here3\n";
-        gBuffer.addRenderBuffer(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+        //gBuffer.addRenderBuffer(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
         std::cout << "here4\n";
         gBuffer.unbind();
+        GLenum error = glGetError();
 
+        //Currently throws error because it doesn't exist
+        lightingPassShader->use();
         lightingPassShader->setUniform("gPosition", 0);
         lightingPassShader->setUniform("gNormal", 1);
         lightingPassShader->setUniform("gAlbedoSpec", 2);
@@ -253,15 +256,15 @@ namespace nebula {
 //            mesh->draw(*gBufferShader);
 //            gBuffer.unbind();
 
-//            shader->use();
-//            shader->setProjectionMatrix(projection);
-//            shader->setViewMatrix(camera.getMatrix());
-//            shader->setModelMatrix(model);
-//
-//            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-//            glEnable(GL_DEPTH_TEST);
-//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//            mesh->draw(*shader);
+            shader->use();
+            shader->setProjectionMatrix(projection);
+            shader->setViewMatrix(camera.getMatrix());
+            shader->setModelMatrix(model);
+
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glEnable(GL_DEPTH_TEST);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            mesh->draw(*shader);
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
@@ -269,11 +272,11 @@ namespace nebula {
 
             ImGui::Begin("ColorInspector");
             ImGui::SetWindowSize({static_cast<float>(options.width / 4) + 20, static_cast<float>(options.height) - 100});
-//            auto& textures = gBuffer.getTextureAttachments();
+            auto& textures = gBuffer.getTextureAttachments();
 //
-//            for(auto& tex : textures) {
-//                ImGui::Image((void*)(intptr_t)tex.texture.getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
-//            }
+            for(auto& tex : textures) {
+                ImGui::Image((void*)(intptr_t)tex.texture->getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
+            }
 //            ImGui::Image((void*)(intptr_t)positionPass.getTexture().getTextureId(), ImVec2(options.width / 4, options.height / 4), ImVec2(0, 0), ImVec2(1, -1));
 //            //ImGui::End();
 //            //ImGui::Begin("NormalInspector");

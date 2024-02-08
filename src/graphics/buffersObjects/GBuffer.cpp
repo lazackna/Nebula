@@ -11,8 +11,8 @@ namespace nebula {
     }
 
     void GBuffer::addTextureAttachment(GLint internalFormat, GLenum format, GLenum type, GLenum attachment, const std::string& name) {
-        Texture tex = Texture(fbo, internalFormat, format, type, attachment);
-        tex.name = name;
+        auto tex = std::make_shared<Texture>(fbo, internalFormat, format, type, attachment);
+        tex->name = name;
         std::cout << "memory problem\n";
         textureAttachments.push_back({attachment, std::move(tex)});
         std::cout << "passed push\n";

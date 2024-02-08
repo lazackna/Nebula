@@ -16,7 +16,7 @@ namespace nebula {
     public:
         struct fboTexture {
             GLenum attachment;
-            Texture texture;
+            std::shared_ptr<Texture> texture;
         };
     private:
         Fbo fbo;

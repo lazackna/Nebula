@@ -20,5 +20,7 @@ void main()
     gAlbedoSpec.rgb = texture(texture_diffuse1, TexCoords).rgb;
     // store specular intensity in gAlbedoSpec's alpha component
     gAlbedoSpec.a = texture(texture_specular1, TexCoords).r;
+
+    gl_color = vec4(gAlbedoSpec.rgb, 1.0f);
 }
 
