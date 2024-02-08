@@ -16,7 +16,7 @@ out vec4 color;
 
 void main()
 {
-    position = a_position;
+    position = (modelMatrix * vec4(a_position, 1.0f)).xyz;
     normal = normalize(normalMatrix * a_normal);
     texcoord = a_texcoord;
     color = a_color;

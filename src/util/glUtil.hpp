@@ -52,7 +52,7 @@ void checkGLError(const char* file, int line) {
                 error = "Unknown error";
                 break;
         }
-        std::cerr << "OpenGL error in file " << file << " at line " << line << ": " << error << std::endl;
+        std::cout << "OpenGL error in file " << file << " at line " << line << ": " << error << std::endl;
     }
 }
 

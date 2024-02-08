@@ -13,7 +13,7 @@ namespace nebula {
         glm::mat4 modelMatrix;
         glm::mat4 projectionMatrix;
         glm::mat4 viewMatrix;
-        glm::mat3 normalMatrix;
+        glm::mat3 normalMatrix{};
 
     public:
         explicit BasicShader(const std::string &shader);

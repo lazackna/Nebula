@@ -13,6 +13,8 @@
 #include "../Window.hpp"
 
 #include "input/Input.hpp"
+#include "../graphics/buffersObjects/VAO.hpp"
+#include "../graphics/buffersObjects/VBO.hpp"
 
 
 namespace nebula {
@@ -27,6 +29,9 @@ namespace nebula {
         std::optional<ErrorCallback> onError;
 
         std::unique_ptr<Input> input;
+
+        Vao quadVao;
+        Vbo quadVbo;
     private:
         void initialize();
 
@@ -37,6 +42,8 @@ namespace nebula {
 
         void update(double deltaTime);
         void draw();
+
+        void renderQuad();
 
     public:
         explicit Nebula(NebulaOptions  options);

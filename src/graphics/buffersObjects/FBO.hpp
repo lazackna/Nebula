@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include <glad/glad.h>
+
 namespace nebula {
 
     class FBO;
@@ -21,8 +23,8 @@ namespace nebula {
         FBO(int width, int height);
 
         ~FBO();
-        void bind() const;
-        static void unbind();
+        void bind(GLenum target = GL_FRAMEBUFFER) const;
+        static void unbind(GLenum target = GL_FRAMEBUFFER);
 
         static Fbo create(int width, int height);
 

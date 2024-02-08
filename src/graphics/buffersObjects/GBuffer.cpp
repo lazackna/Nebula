@@ -26,11 +26,11 @@ namespace nebula {
         renderBuffers.push_back(RBO::create(fbo, format, attachment));
     }
 
-    void GBuffer::bind() const {
-        fbo->bind();
+    void GBuffer::bind(GLenum target) const {
+        fbo->bind(target);
     }
 
-    void GBuffer::unbind() const {
-        fbo->unbind();
+    void GBuffer::unbind(GLenum target) const {
+        fbo->unbind(target);
     }
 } // nebula

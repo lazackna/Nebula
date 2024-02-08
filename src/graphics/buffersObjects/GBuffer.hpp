@@ -30,8 +30,8 @@ namespace nebula {
         void addRenderBuffer(GLenum format, GLenum attachment);
         [[nodiscard]] const std::vector<GBuffer::fboTexture> &getTextureAttachments() const;
 
-        void bind() const;
-        void unbind() const;
+        void bind(GLenum target = GL_FRAMEBUFFER) const;
+        void unbind(GLenum target = GL_FRAMEBUFFER) const;
     };
 
 } // nebula

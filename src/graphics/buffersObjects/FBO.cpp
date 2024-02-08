@@ -15,12 +15,12 @@ namespace nebula {
         glDeleteFramebuffers(1, &id);
     }
 
-    void FBO::bind() const{
-        glBindFramebuffer(GL_FRAMEBUFFER, id);
+    void FBO::bind(GLenum target) const{
+        glBindFramebuffer(target, id);
     }
 
-    void FBO::unbind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    void FBO::unbind(GLenum target) {
+        glBindFramebuffer(target, 0);
     }
 
     Fbo FBO::create(int width, int height) {
