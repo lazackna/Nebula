@@ -1,0 +1,136 @@
+{
+    "Resources": [
+        {
+            "path": "Resources/island.glb"
+        },
+        {
+            "path": "Resources/kenney_piratekit_1.1/tower.glb"
+        },
+        {
+            "path": "Resources/kenney_piratekit_1.1/palm_long.glb"
+        },
+        {
+            "path": "Resources/kenney_piratekit_1.1/boat_large.glb"
+        },
+        {
+            "path": "Resources/kenney_piratekit_1.1/pirate_captain.glb"
+        },
+        {
+            "path": "Resources/kenney_piratekit_1.1/bottle.glb"
+        }
+    ],
+    "RootEntity": "8db8b833-572d-40b2-8d85-c8f025815bcd",
+    "Entities": [
+        {
+            "id": "8db8b833-572d-40b2-8d85-c8f025815bcd",
+            "name": "Ground",
+            "resourceIndex": 0,
+            "transform": [
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "id": "d3813e3e-847b-4b8f-b172-0c310a04a59f",
+            "name": "Tower",
+            "parent": "8db8b833-572d-40b2-8d85-c8f025815bcd",
+            "resourceIndex": 1,
+            "transform": [
+                -1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                -1,
+                -2,
+                0.50,
+                3.25
+            ],
+            "scale": [
+                0.5, 0.5, 0.5
+            ]
+        },
+        {
+            "id": "10f9589e-d236-45e8-92f3-38c4faa8ea30",
+            "name": "Palm tree",
+            "parent": "8db8b833-572d-40b2-8d85-c8f025815bcd",
+            "resourceIndex": 2,
+            "transform": [
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                4
+            ]
+        },
+        {
+            "id": "d9f3ee0f-7b98-4b68-8f3e-7c60f5be8541",
+            "name": "Boat",
+            "parent": "8db8b833-572d-40b2-8d85-c8f025815bcd",
+            "resourceIndex": 3,
+            "transform": [
+                 0.7071068,  0.0000000,  0.7071068,
+                 0.0000000,  1.0000000,  0.0000000,
+                -0.7071068,  0.0000000,  0.7071068,
+                -2,          -0.075,     6
+            ],
+            "scale": [
+                0.5, 0.5, 0.5
+            ]
+        },
+        {
+            "id": "3d293b2a-1d47-47a4-a9f6-ceb283de7492",
+            "name": "Captian",
+            "parent": "d9f3ee0f-7b98-4b68-8f3e-7c60f5be8541",
+            "resourceIndex": 4,
+            "transform": [
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1,
+                0,
+                0.25,
+                0
+            ],
+            "scale": [
+                1.1, 1.1, 1.1
+            ]
+        },
+        {
+            "id": "06e57f6f-b0d6-43ca-aa8f-1abee59d5f1d",
+            "name": "Bottle",
+            "parent": "3d293b2a-1d47-47a4-a9f6-ceb283de7492",
+            "resourceIndex": 5,
+            "transform": [
+                1.0000000,  0.0000000,  0.0000000,
+                0.0000000,  0.7071068, -0.7071068,
+                0.0000000,  0.7071068,  0.7071068,
+                -0.25,
+                0.25,
+                0
+            ],
+            "scale": [
+                0.4, 0.4, 0.4
+            ]
+        }
+    ]
+}

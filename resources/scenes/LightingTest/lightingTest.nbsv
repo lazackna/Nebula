@@ -1,0 +1,81 @@
+{
+    "Resources": [
+        {
+            "path": "Resources/camera.glb"
+        },
+        {
+            "path": "Resources/WaterBottle.glb"
+        }
+    ],
+    "RootEntity": "7db8b833-572d-40b2-8d85-c8f025815bcd",
+    "Entities": [
+        {
+            "id": "7db8b833-572d-40b2-8d85-c8f025815bcd",
+            "name": "Cameras",
+            "transform": [
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "id": "8db8b833-572d-40b2-8d85-c8f025815bcd",
+            "name": "Camera",
+            "parent": "7db8b833-572d-40b2-8d85-c8f025815bcd",
+            "resourceIndex": 0,
+            "transform": [
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                30
+            ],
+            "scale": [
+                1.5,
+                1.5,
+                1.5
+            ]
+        },
+        {
+            "id": "9db8b833-572d-40b2-8d85-c8f025815bcd",
+            "name": "Camera2",
+            "parent": "7db8b833-572d-40b2-8d85-c8f025815bcd",
+            "resourceIndex": 1,
+            "transform": [
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                10.5,
+                10.5,
+                10.5
+            ]
+        }
+    ]
+}

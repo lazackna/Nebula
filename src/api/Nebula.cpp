@@ -154,7 +154,8 @@ namespace nebula {
 
         std::vector<RenderingPass> renderingPasses;
 
-        mesh = loadMesh(R"(resources/models/cube/cube.glb)");
+        //mesh = loadMesh(R"(resources/models/bottle/bottle.glb)");
+        mesh = loadMesh(R"(resources/scenes/Test01/Resources/island.glb)");
         std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
 
         Fbo positionBuffer = FBO::create(options.width, options.height);
@@ -172,10 +173,7 @@ namespace nebula {
         auto colorShader = std::make_unique<BasicShader>("resources/testing/colors");
         RenderingPass colorPass = RenderingPass(colorBuffer, *colorShader, "color");
 
-        Fbo outputBuffer = FBO::create(options.width, options.height);
-        Rbo outputRbo = RBO::create(outputBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
         auto outputShader = std::make_unique<BasicShader>("resources/testing/shading");
-        RenderingPass outputPass = RenderingPass(outputBuffer, *outputShader, "output");
 
         UISystem uiSystem = UISystem(window, "#version 400");
         UILayer debugLayer = UILayer("Texture Debugger");
@@ -225,25 +223,6 @@ namespace nebula {
             colorPass.render(camera, model, projection, *mesh);
             specular.unbind();
 
-//            FBO::unbind();
-//            outputBuffer->bind();
-//            outputShader->use();
-//            outputShader->setUniform("positionTex", 0);
-//            outputShader->setUniform("normalTex", 1);
-//            outputShader->setUniform("albedoTex", 2);
-//
-//            outputShader->setProjectionMatrix(projection);
-//            outputShader->setModelMatrix(model);
-//            outputShader->setViewMatrix(camera.getMatrix());
-//
-//            positionPass.getTexture().bind(0);
-//            normalPass.getTexture().bind(1);
-//            colorPass.getTexture().bind(2);
-//            renderQuad();
-//            outputBuffer->unbind();
-
-            //colorShader->setUniform("ourTexture", 0);
-           // glBindFramebuffer(GL_FRAMEBUFFER, 0);
             outputShader->use();
             outputShader->setUniform("positionTex", 0);
             outputShader->setUniform("normalTex", 1);
@@ -317,7 +296,7 @@ namespace nebula {
             Light light;
 
             auto xPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
-            auto yPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 4.0);
+            auto yPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 4.0) + 4;
             auto zPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
             light.Position = glm::vec3(xPos, yPos, zPos);
 
