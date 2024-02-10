@@ -33,7 +33,7 @@ namespace nebula {
     }
 
     void Texture::unbind() {
-        glActiveTexture(0);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
@@ -110,14 +110,12 @@ namespace nebula {
 
         glGenTextures(1, &textureId);
         glBindTexture(GL_TEXTURE_2D, textureId);
-        std::cout << "generated texture\n";
+
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, fbo->getWidth(), fbo->getHeight(), 0, format, type, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        std::cout << "making framebuffer texture\n";
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, textureId, 0);
-        std::cout << "making framebuffer texture succesful\n";
         glBindTexture(GL_TEXTURE_2D, 0);
 
         fbo->unbind();
