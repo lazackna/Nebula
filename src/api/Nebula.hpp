@@ -15,9 +15,13 @@
 #include "input/Input.hpp"
 #include "../graphics/buffersObjects/VAO.hpp"
 #include "../graphics/buffersObjects/VBO.hpp"
+#include "../shaders/light/lighting.hpp"
 
+#define NR_LIGHTS 32
 
 namespace nebula {
+
+    class Shader;
 
     class Nebula {
     private:
@@ -32,6 +36,8 @@ namespace nebula {
 
         Vao quadVao;
         Vbo quadVbo;
+
+        std::vector<Light> lights;
     private:
         void initialize();
 
@@ -42,6 +48,9 @@ namespace nebula {
 
         void update(double deltaTime);
         void draw();
+
+        static std::vector<Light> createLights();
+        void setLights(Shader& shader);
 
         void renderQuad();
 

@@ -8,14 +8,13 @@
 #include <glm/glm.hpp>
 
 namespace nebula {
-    struct PointLight {
-        //is direction when w == 0.
-        //Point light when w == 1.
-        glm::vec4 direction;
+    struct Light {
+        glm::vec3 Position;
+        glm::vec3 Color;
 
-        glm::vec3 color;
-        float ambientIntensity;
-        float diffuseIntensity;
+        float Linear;
+        float Quadratic;
+        float Radius;
     };
 }
 #endif //NEBULA_MAIN_LIGHTING_HPP
