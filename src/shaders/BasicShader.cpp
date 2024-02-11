@@ -37,10 +37,10 @@ namespace nebula {
                     //setDiffuseTexture(0);
                     it->second->bind(0);
                 }
-//                if (tt == TextureType::NORMAL) {
-//                    setNormalTexture(1);
-//                    it->second->bind(1);
-//                }
+                if (tt == TextureType::METALLICROUGHNESS) {
+                    //setNormalTexture(1);
+                    //it->second->bind(1);
+                }
             }
         }
     }

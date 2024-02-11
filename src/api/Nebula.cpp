@@ -25,6 +25,7 @@
 #include "../graphics/mesh/MeshLoading.hpp"
 #include "../graphics/mesh/loaders/GltbLoader.hpp"
 #include "../util/glUtil.hpp"
+#include "../util/RandomUtils.hpp"
 #include "../graphics/RenderingPass.hpp"
 #include "../graphics/buffersObjects/RBO.hpp"
 #include "../graphics/buffersObjects/GBuffer.hpp"
@@ -50,7 +51,7 @@ void onDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei len
 }
 
 namespace nebula {
-    Nebula* Nebula::instance;
+    Nebula *Nebula::instance;
 
     Nebula::Nebula(NebulaOptions options) : options(std::move(options)) {
         if (instance) {
@@ -91,7 +92,7 @@ namespace nebula {
         glfwMakeContextCurrent(window->getWindow());
         glfwSwapInterval(1);
 
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
             Debug::logError("Failed to initialize GLAD");
             exit(EXIT_FAILURE);
         }
@@ -101,9 +102,9 @@ namespace nebula {
 
         glViewport(0, 0, options.width, options.height);
 
-        if(glDebugMessageCallback) {
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(&onDebug, nullptr);
+        if (glDebugMessageCallback) {
+            glEnable(GL_DEBUG_OUTPUT);
+            glDebugMessageCallback(&onDebug, nullptr);
             glEnable(GL_DEBUG_OUTPUT);
         }
 
@@ -139,15 +140,19 @@ namespace nebula {
     void Nebula::framebufferResizeCallback(GLFWwindow *window, int width, int height) {
         glViewport(0, 0, width, height);
     }
+
     bool enableTexture = true;
+
     void Nebula::onKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, true);
-        } else if(key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
             enableTexture = !enableTexture;
         }
     }
+
     std::shared_ptr<Mesh> mesh;
+
     void Nebula::start() {
 
         FpsCam camera(window->getWindow());
@@ -174,12 +179,16 @@ namespace nebula {
         RenderingPass colorPass = RenderingPass(colorBuffer, *colorShader, "color");
 
         auto outputShader = std::make_unique<BasicShader>("resources/testing/shading");
+        auto lightShader = std::make_unique<BasicShader>("resources/testing/lights");
 
         UISystem uiSystem = UISystem(window, "#version 400");
         UILayer debugLayer = UILayer("Texture Debugger");
-        debugLayer.addElement(std::make_unique<TextureElement>(positionPass.getTexture(), options.width / 4, options.height / 4));
-        debugLayer.addElement(std::make_unique<TextureElement>(normalPass.getTexture(), options.width / 4, options.height / 4));
-        debugLayer.addElement(std::make_unique<TextureElement>(colorPass.getTexture(), options.width / 4, options.height / 4));
+        debugLayer.addElement(
+                std::make_unique<TextureElement>(positionPass.getTexture(), options.width / 4, options.height / 4));
+        debugLayer.addElement(
+                std::make_unique<TextureElement>(normalPass.getTexture(), options.width / 4, options.height / 4));
+        debugLayer.addElement(
+                std::make_unique<TextureElement>(colorPass.getTexture(), options.width / 4, options.height / 4));
 
         uiSystem.addLayer(debugLayer);
 
@@ -189,7 +198,7 @@ namespace nebula {
         float rotation = 0;
         auto currentTime = static_cast<double>(glfwGetTime());
         double lastTime = currentTime;
-        Texture specular = Texture(glm::vec4(1,0,0,0));
+        Texture specular = Texture(glm::vec4(0.1f, 0, 0, 0));
         while (!glfwWindowShouldClose(window->getWindow())) {
 
             currentTime = static_cast<double>(glfwGetTime());
@@ -206,10 +215,12 @@ namespace nebula {
             //projection
             int viewport[4];
             glGetIntegerv(GL_VIEWPORT, viewport);
-            glm::mat4 projection = createPerspective(glm::radians(45.0f), static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]), 0.1f, 100.0f);
+            glm::mat4 projection = createPerspective(glm::radians(45.0f),
+                                                     static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]),
+                                                     0.1f, 100.0f);
             glm::mat4 model = glm::mat4(1);
-            rotate(model, glm::vec3(rotation,rotation,rotation));
-
+            rotate(model, glm::vec3(rotation, rotation, rotation));
+            //model = glm::scale(model, {5,5,5});
 
 
             positionPass.render(camera, model, projection, *mesh);
@@ -244,6 +255,27 @@ namespace nebula {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             renderQuad();
+
+            positionBuffer->bind(GL_READ_FRAMEBUFFER);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+            glBlitFramebuffer(0, 0, options.width, options.height, 0, 0, options.width, options.height,
+                              GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+            FBO::unbind();
+
+            lightShader->use();
+            lightShader->setUniform("projection", projection);
+            lightShader->setUniform("view", camera.getMatrix());
+
+            for(int i = 0; i < lights.size(); i++) {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, lights[i].Position);
+                model = glm::scale(model, glm::vec3(0.125f));
+                lightShader->setUniform("model", model);
+                lightShader->setUniform("lightColor", lights[i].Color);
+                renderCube();
+            }
+
             uiSystem.render();
 
             glfwSwapBuffers(window->getWindow());
@@ -255,7 +287,7 @@ namespace nebula {
     }
 
     void Nebula::update(double deltaTime) {
-       // input->update();
+        // input->update();
     }
 
     void Nebula::draw() {
@@ -263,7 +295,7 @@ namespace nebula {
     }
 
     void Nebula::renderQuad() {
-        if(!quadVao) {
+        if (!quadVao) {
             std::vector<Vertex> vertices = {
                     Vertex::PT({-1.0f, 1.0f, -0.0f}, {0.0f, 1.0f}),
                     Vertex::PT({-1.0f, -1.0f, -0.0f}, {0.0f, 0.0f}),
@@ -277,9 +309,8 @@ namespace nebula {
             quadVbo->bind();
 
             quadVao->addVertexBufferLayout(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
-            quadVao->addVertexBufferLayout(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, normal));
-            quadVao->addVertexBufferLayout(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, texcoord));
-            quadVao->addVertexBufferLayout(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, color));
+            quadVao->addVertexBufferLayout(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                           (void *) offsetof(Vertex, texcoord));
 
             quadVao->unbind();
             quadVbo->unbind();
@@ -289,20 +320,107 @@ namespace nebula {
         quadVao->unbind();
     }
 
+    void Nebula::renderCube() {
+        if (!cubeVao) {
+            float verts[] = {
+                    // back face
+                    -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+                    1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
+                    1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // bottom-right
+                    1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
+                    -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+                    -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, // top-left
+                    // front face
+                    -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
+                    1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // bottom-right
+                    1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
+                    1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
+                    -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // top-left
+                    -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
+                    // left face
+                    -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
+                    -1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-left
+                    -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
+                    -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
+                    -1.0f, -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-right
+                    -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
+                    // right face
+                    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
+                    1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
+                    1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-right
+                    1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
+                    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
+                    1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-left
+                    // bottom face
+                    -1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
+                    1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // top-left
+                    1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
+                    1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
+                    -1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-right
+                    -1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
+                    // top face
+                    -1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
+                    1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+                    1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // top-right
+                    1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+                    -1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
+                    -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  // bottom-left
+            };
+
+            std::vector<Vertex> vertices;
+
+            for (int i = 0; i < sizeof(verts) / sizeof(float); i += 8) {
+                vertices.push_back(Vertex::PTN({verts[i], verts[i + 1], verts[i + 2]}, {verts[i + 6], verts[i + 7]},
+                                               {verts[i + 3], verts[i + 4], verts[i + 5]}));
+            }
+
+            cubeVao = VAO::create();
+            cubeVbo = VBO::create(vertices);
+
+            cubeVao->bind();
+            cubeVbo->bind();
+
+            cubeVao->addVertexBufferLayout(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                           (void *) offsetof(Vertex, position));
+            cubeVao->addVertexBufferLayout(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                           (void *) offsetof(Vertex, normal));
+            cubeVao->addVertexBufferLayout(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                                           (void *) offsetof(Vertex, texcoord));
+
+            cubeVao->unbind();
+            cubeVbo->unbind();
+        }
+
+        cubeVao->bind();
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 36);
+        cubeVao->unbind();
+    }
+
     std::vector<Light> Nebula::createLights() {
         std::vector<Light> lights;
 
+//        Light light;
+//        auto xPos = 0;
+//        auto yPos = 2;
+//        auto zPos = 0;
+//        light.Position = glm::vec3(xPos, yPos, zPos);
+//
+//        auto rColor = 0.5f;
+//        auto gColor = 0.3f;
+//        auto bColor = 0.01f;
+//        light.Color = glm::vec3(rColor, gColor, bColor);
+//        lights.push_back(light);
         for(int i = 0; i < NR_LIGHTS; i++) {
             Light light;
 
-            auto xPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
-            auto yPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 4.0) + 4;
-            auto zPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
+            auto xPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateInt(0, 100)) / 100.0) * 6.0 - 3.0);
+            auto yPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateInt(0, 100)) / 100.0) * 6.0 - 4.0);
+            auto zPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateInt(0, 100)) / 100.0) * 6.0 - 3.0);
             light.Position = glm::vec3(xPos, yPos, zPos);
 
-            auto rColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-            auto gColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-            auto bColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
+            auto rColor = static_cast<float>(((rand() % 100) / 200.0f));// + 0.5); // between 0.5 and 1.)
+            auto gColor = static_cast<float>(((rand() % 100) / 200.0f));// + 0.5); // between 0.5 and 1.)
+            auto bColor = static_cast<float>(((rand() % 100) / 200.0f));// + 0.5); // between 0.5 and 1.)
             light.Color = glm::vec3(rColor, gColor, bColor);
 
 
@@ -313,7 +431,7 @@ namespace nebula {
     }
 
     void Nebula::setLights(Shader &shader) {
-        for(int i = 0; i < lights.size(); i++) {
+        for (int i = 0; i < lights.size(); i++) {
             shader.setUniform("lights[" + std::to_string(i) + "].Position", lights[i].Position);
             shader.setUniform("lights[" + std::to_string(i) + "].Color", lights[i].Color);
 
@@ -325,7 +443,9 @@ namespace nebula {
             shader.setUniform("lights[" + std::to_string(i) + "].Quadratic", quadratic);
 
             const float maxBrightness = std::fmaxf(std::fmaxf(lights[i].Color.r, lights[i].Color.g), lights[i].Color.b);
-            float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
+            float radius = (-linear +
+                            std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) /
+                           (2.0f * quadratic);
             shader.setUniform("lights[" + std::to_string(i) + "].Radius", radius);
         }
     }

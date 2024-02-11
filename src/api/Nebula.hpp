@@ -37,6 +37,9 @@ namespace nebula {
         Vao quadVao;
         Vbo quadVbo;
 
+        Vao cubeVao;
+        Vbo cubeVbo;
+
         std::vector<Light> lights;
     private:
         void initialize();
@@ -53,6 +56,7 @@ namespace nebula {
         void setLights(Shader& shader);
 
         void renderQuad();
+        void renderCube();
 
     public:
         explicit Nebula(NebulaOptions  options);

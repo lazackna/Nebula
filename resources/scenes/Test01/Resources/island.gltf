@@ -1,0 +1,204 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v1.8.19",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Plane"
+    },
+    {
+      "mesh": 1,
+      "name": "Sphere"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Material.001",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.025903252884745598,
+          0.5776951313018799,
+          0.8000000715255737,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Material.002",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.847000002861023,
+          0.760699987411499,
+          0.47774213552474976,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Plane",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    },
+    {
+      "name": "Sphere",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "NORMAL": 5,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 1
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 4512,
+      "max": [
+        12.083556175231934,
+        0,
+        12.083556175231934
+      ],
+      "min": [
+        -12.083556175231934,
+        0,
+        -12.083556175231934
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 4512,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 4512,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 23814,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 2506,
+      "max": [
+        5.4772491455078125,
+        1.6290740966796875,
+        5.769344806671143
+      ],
+      "min": [
+        -5.461808204650879,
+        -2.715757131576538,
+        -5.249844074249268
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 2506,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 6,
+      "componentType": 5126,
+      "count": 2506,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 7,
+      "componentType": 5123,
+      "count": 3642,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 54144,
+      "byteOffset": 0
+    },
+    {
+      "buffer": 0,
+      "byteLength": 54144,
+      "byteOffset": 54144
+    },
+    {
+      "buffer": 0,
+      "byteLength": 36096,
+      "byteOffset": 108288
+    },
+    {
+      "buffer": 0,
+      "byteLength": 47628,
+      "byteOffset": 144384
+    },
+    {
+      "buffer": 0,
+      "byteLength": 30072,
+      "byteOffset": 192012
+    },
+    {
+      "buffer": 0,
+      "byteLength": 30072,
+      "byteOffset": 222084
+    },
+    {
+      "buffer": 0,
+      "byteLength": 20048,
+      "byteOffset": 252156
+    },
+    {
+      "buffer": 0,
+      "byteLength": 7284,
+      "byteOffset": 272204
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "island_data.bin",
+      "byteLength": 279488
+    }
+  ]
+}
