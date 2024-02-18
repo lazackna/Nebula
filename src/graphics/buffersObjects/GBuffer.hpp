@@ -13,25 +13,21 @@
 namespace nebula {
 
     class GBuffer {
-    public:
-        struct fboTexture {
-            GLenum attachment;
-            std::shared_ptr<Texture> texture;
-        };
-    private:
         Fbo fbo;
-        std::vector<Rbo> renderBuffers;
-        std::vector<fboTexture> textureAttachments;
-
+        Rbo rbo;
+        std::vector<Texture> textures;
     public:
-        GBuffer(int width, int height);
+        enum class textureType {
+            position,
+            normal,
+            albedoSpec,
+            textureAmount
+        };
 
-        void addTextureAttachment(GLint internalFormat, GLenum format, GLenum type, GLenum attachment, const std::string& name);
-        void addRenderBuffer(GLenum format, GLenum attachment);
-        [[nodiscard]] const std::vector<GBuffer::fboTexture> &getTextureAttachments() const;
+        GBuffer(unsigned int width, unsigned int height);
 
-        void bind(GLenum target = GL_FRAMEBUFFER) const;
-        void unbind(GLenum target = GL_FRAMEBUFFER) const;
+        void addTextureAttachment(GLint internalFormat, GLenum format, GLenum type, GLenum attachment);
+        void setDrawBuffers(const std::vector<GLenum>& attachments);
     };
 
 } // nebula

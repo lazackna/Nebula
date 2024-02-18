@@ -112,19 +112,8 @@ namespace nebula {
 
         registerMeshLoader(std::make_unique<GltbLoader>());
 
-
-//        IMGUI_CHECKVERSION();
-//        ImGui::CreateContext();
-//        ImGuiIO& io = ImGui::GetIO();
-//        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-//        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-//
-//        ImGui::StyleColorsDark();
-//        ImGui_ImplGlfw_InitForOpenGL(window->getWindow(), true);
-//
-//        ImGui_ImplOpenGL3_Init("#version 400");
-
         input = std::make_unique<Input>(window->getWindow());
+        camera = std::make_unique<FpsCam>(window->getWindow());
     }
 
     void Nebula::errorCallback(int error, const char *description) {
@@ -155,50 +144,61 @@ namespace nebula {
 
     void Nebula::start() {
 
-        FpsCam camera(window->getWindow());
+//        std::vector<RenderingPass> renderingPasses;
+//
+//        //mesh = loadMesh(R"(resources/models/bottle/bottle.glb)");
+//        mesh = loadMesh(R"(resources/scenes/Test01/Resources/island.glb)");
+//        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
+//
+//        GBuffer gBuffer = GBuffer(options.width, options.height);
+//
+//        //position texture
+//        gBuffer.addTextureAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT0);
+//        std::cout << "position tex\n";
+//        gBuffer.addTextureAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT1);
+//        std::cout << "normal tex\n";
+//        gBuffer.addTextureAttachment(GL_RGBA16F, GL_RGBA, GL_FLOAT, GL_COLOR_ATTACHMENT2);
+//        std::cout << "color tex\n";
+        //gBuffer.setDrawBuffers({GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2});
 
-        std::vector<RenderingPass> renderingPasses;
-
-        //mesh = loadMesh(R"(resources/models/bottle/bottle.glb)");
-        mesh = loadMesh(R"(resources/scenes/Test01/Resources/island.glb)");
-        std::unique_ptr<BasicShader> shader = std::make_unique<BasicShader>("resources/simple");
-
-        Fbo positionBuffer = FBO::create(options.width, options.height);
-        Rbo positionRbo = RBO::create(positionBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-        auto positionShader = std::make_unique<BasicShader>("resources/testing/positions");
-        RenderingPass positionPass = RenderingPass(positionBuffer, *positionShader, "position");
-
-        Fbo normalBuffer = FBO::create(options.width, options.height);
-        Rbo normalRbo = RBO::create(normalBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-        auto normalShader = std::make_unique<BasicShader>("resources/testing/normals");
-        RenderingPass normalPass = RenderingPass(normalBuffer, *normalShader, "normal");
-
-        Fbo colorBuffer = FBO::create(options.width, options.height);
-        Rbo colorRbo = RBO::create(colorBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
-        auto colorShader = std::make_unique<BasicShader>("resources/testing/colors");
-        RenderingPass colorPass = RenderingPass(colorBuffer, *colorShader, "color");
-
-        auto outputShader = std::make_unique<BasicShader>("resources/testing/shading");
-        auto lightShader = std::make_unique<BasicShader>("resources/testing/lights");
-
-        UISystem uiSystem = UISystem(window, "#version 400");
-        UILayer debugLayer = UILayer("Texture Debugger");
-        debugLayer.addElement(
-                std::make_unique<TextureElement>(positionPass.getTexture(), options.width / 4, options.height / 4));
-        debugLayer.addElement(
-                std::make_unique<TextureElement>(normalPass.getTexture(), options.width / 4, options.height / 4));
-        debugLayer.addElement(
-                std::make_unique<TextureElement>(colorPass.getTexture(), options.width / 4, options.height / 4));
-
-        uiSystem.addLayer(debugLayer);
-
-        lights = createLights();
+//
+//
+//        Fbo positionBuffer = FBO::create(options.width, options.height);
+//        Rbo positionRbo = RBO::create(positionBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+//        auto positionShader = std::make_unique<BasicShader>("resources/testing/positions");
+//        RenderingPass positionPass = RenderingPass(positionBuffer, *positionShader, "position");
+//
+//        Fbo normalBuffer = FBO::create(options.width, options.height);
+//        Rbo normalRbo = RBO::create(normalBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+//        auto normalShader = std::make_unique<BasicShader>("resources/testing/normals");
+//        RenderingPass normalPass = RenderingPass(normalBuffer, *normalShader, "normal");
+//
+//        Fbo colorBuffer = FBO::create(options.width, options.height);
+//        Rbo colorRbo = RBO::create(colorBuffer, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
+//        auto colorShader = std::make_unique<BasicShader>("resources/testing/colors");
+//        RenderingPass colorPass = RenderingPass(colorBuffer, *colorShader, "color");
+//
+//        auto outputShader = std::make_unique<BasicShader>("resources/testing/shading");
+//        auto lightShader = std::make_unique<BasicShader>("resources/testing/lights");
+//
+//        UISystem uiSystem = UISystem(window, "#version 400");
+//        UILayer debugLayer = UILayer("Texture Debugger");
+//        debugLayer.addElement(
+//                std::make_unique<TextureElement>(positionPass.getTexture(), options.width / 4, options.height / 4));
+//        debugLayer.addElement(
+//                std::make_unique<TextureElement>(normalPass.getTexture(), options.width / 4, options.height / 4));
+//        debugLayer.addElement(
+//                std::make_unique<TextureElement>(colorPass.getTexture(), options.width / 4, options.height / 4));
+//
+//        uiSystem.addLayer(debugLayer);
+//
+//        lights = createLights();
 
         //TODO NOTE: uniforms can only be set on an active shader
-        float rotation = 0;
+       // float rotation = 0;
         auto currentTime = static_cast<double>(glfwGetTime());
         double lastTime = currentTime;
-        Texture specular = Texture(glm::vec4(0.1f, 0, 0, 0));
+//        Texture specular = Texture(glm::vec4(0.1f, 0, 0, 0));
         while (!glfwWindowShouldClose(window->getWindow())) {
 
             currentTime = static_cast<double>(glfwGetTime());
@@ -210,73 +210,64 @@ namespace nebula {
             update(deltaTime);
             draw();
 
-            camera.update(deltaTime);
-
-            //projection
-            int viewport[4];
-            glGetIntegerv(GL_VIEWPORT, viewport);
-            glm::mat4 projection = createPerspective(glm::radians(45.0f),
-                                                     static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]),
-                                                     0.1f, 100.0f);
-            glm::mat4 model = glm::mat4(1);
-            rotate(model, glm::vec3(rotation, rotation, rotation));
-            //model = glm::scale(model, {5,5,5});
-
-
-            positionPass.render(camera, model, projection, *mesh);
-            normalPass.render(camera, model, projection, *mesh);
-
-            //Set specular texture for now.
-            colorShader->use();
-            colorShader->setUniform("albedo", 0);
-            colorShader->setUniform("specular", 1);
-            specular.bind(1);
-            colorPass.render(camera, model, projection, *mesh);
-            specular.unbind();
-
-            outputShader->use();
-            outputShader->setUniform("positionTex", 0);
-            outputShader->setUniform("normalTex", 1);
-            outputShader->setUniform("albedoTex", 2);
-
-            positionPass.getTexture().bind(0);
-            normalPass.getTexture().bind(1);
-            colorPass.getTexture().bind(2);
-
-            outputShader->setProjectionMatrix(projection);
-            outputShader->setModelMatrix(glm::mat4(1));
-            outputShader->setViewMatrix(camera.getMatrix());
-            outputShader->setUniform("cameraPos", camera.getPosition());
-
-            setLights(*outputShader);
-
-            glDisable(GL_DEPTH_TEST);
-            glClearColor(1, 0.5, 0.5, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            renderQuad();
-
-            positionBuffer->bind(GL_READ_FRAMEBUFFER);
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-            glBlitFramebuffer(0, 0, options.width, options.height, 0, 0, options.width, options.height,
-                              GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-            FBO::unbind();
-
-            lightShader->use();
-            lightShader->setUniform("projection", projection);
-            lightShader->setUniform("view", camera.getMatrix());
-
-            for(int i = 0; i < lights.size(); i++) {
-                model = glm::mat4(1.0f);
-                model = glm::translate(model, lights[i].Position);
-                model = glm::scale(model, glm::vec3(0.125f));
-                lightShader->setUniform("model", model);
-                lightShader->setUniform("lightColor", lights[i].Color);
-                renderCube();
-            }
-
-            uiSystem.render();
+//            rotate(model, glm::vec3(rotation, rotation, rotation));
+//            //model = glm::scale(model, {5,5,5});
+//
+//
+//            positionPass.render(camera, model, projection, *mesh);
+//            normalPass.render(camera, model, projection, *mesh);
+//
+//            //Set specular texture for now.
+//            colorShader->use();
+//            colorShader->setUniform("albedo", 0);
+//            colorShader->setUniform("specular", 1);
+//            specular.bind(1);
+//            colorPass.render(camera, model, projection, *mesh);
+//            specular.unbind();
+//
+//            outputShader->use();
+//            outputShader->setUniform("positionTex", 0);
+//            outputShader->setUniform("normalTex", 1);
+//            outputShader->setUniform("albedoTex", 2);
+//
+//            positionPass.getTexture().bind(0);
+//            normalPass.getTexture().bind(1);
+//            colorPass.getTexture().bind(2);
+//
+//            outputShader->setProjectionMatrix(projection);
+//            outputShader->setModelMatrix(glm::mat4(1));
+//            outputShader->setViewMatrix(camera.getMatrix());
+//            outputShader->setUniform("cameraPos", camera.getPosition());
+//
+//            setLights(*outputShader);
+//
+//            glDisable(GL_DEPTH_TEST);
+//            glClearColor(1, 0.5, 0.5, 1.0f);
+//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//            renderQuad();
+//
+//            positionBuffer->bind(GL_READ_FRAMEBUFFER);
+//            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+//
+//            glBlitFramebuffer(0, 0, options.width, options.height, 0, 0, options.width, options.height,
+//                              GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+//            FBO::unbind();
+//
+//            lightShader->use();
+//            lightShader->setUniform("projection", projection);
+//            lightShader->setUniform("view", camera.getMatrix());
+//
+//            for(int i = 0; i < lights.size(); i++) {
+//                model = glm::mat4(1.0f);
+//                model = glm::translate(model, lights[i].Position);
+//                model = glm::scale(model, glm::vec3(0.125f));
+//                lightShader->setUniform("model", model);
+//                lightShader->setUniform("lightColor", lights[i].Color);
+//                renderCube();
+//            }
+//
+//            uiSystem.render();
 
             glfwSwapBuffers(window->getWindow());
             glfwPollEvents();
@@ -288,13 +279,20 @@ namespace nebula {
 
     void Nebula::update(double deltaTime) {
         // input->update();
+        camera->update(deltaTime);
     }
 
     void Nebula::draw() {
-
+        int viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        glm::mat4 projection = createPerspective(glm::radians(45.0f),
+                                                 static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]),
+                                                 0.1f, 100.0f);
+        renderer->render(entities, *camera, projection);
     }
 
     void Nebula::renderQuad() {
+
         if (!quadVao) {
             std::vector<Vertex> vertices = {
                     Vertex::PT({-1.0f, 1.0f, -0.0f}, {0.0f, 1.0f}),
@@ -448,5 +446,13 @@ namespace nebula {
                            (2.0f * quadratic);
             shader.setUniform("lights[" + std::to_string(i) + "].Radius", radius);
         }
+    }
+
+    void Nebula::setRenderer(std::shared_ptr<Renderer> renderer) {
+        this->renderer = std::move(renderer);
+    }
+
+    void Nebula::addEntity(Entity &entity) {
+        entities.push_back(entity);
     }
 } // nebula

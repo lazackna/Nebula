@@ -16,6 +16,9 @@
 #include "../graphics/buffersObjects/VAO.hpp"
 #include "../graphics/buffersObjects/VBO.hpp"
 #include "../shaders/light/lighting.hpp"
+#include "../graphics/Entity.hpp"
+#include "../graphics/FpsCam.hpp"
+#include "../graphics/rendering/Renderer.hpp"
 
 #define NR_LIGHTS 32
 
@@ -41,6 +44,10 @@ namespace nebula {
         Vbo cubeVbo;
 
         std::vector<Light> lights;
+        std::vector<Entity> entities;
+        std::unique_ptr<FpsCam> camera;
+
+        std::shared_ptr<Renderer> renderer;
     private:
         void initialize();
 
@@ -64,6 +71,9 @@ namespace nebula {
         void start();
 
         static Nebula& getInstance();
+
+        void setRenderer(std::shared_ptr<Renderer> renderer);
+        void addEntity(Entity& entity);
     };
 
 } // nebula

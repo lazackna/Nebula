@@ -6,6 +6,8 @@
 #include "src/api/ecs/Registry.hpp"
 #include "src/graphics/mesh/MeshLoading.hpp"
 #include "src/Components/MeshComponent.hpp"
+#include "src/graphics/rendering/deferred/DeferredRenderer.hpp"
+#include "src/graphics/rendering/phong/PhongRenderer.hpp"
 
 using namespace nebula;
 
@@ -14,12 +16,15 @@ int main() {
     NebulaOptions options(1280, 720, "Nebula");
     Nebula engine = Nebula(options);
 
-    //auto& meshLoader = MeshLoading::getInstance();
+    //std::shared_ptr<Renderer> renderer = std::make_shared<DeferredRenderer>(options.width, options.height);
+    std::shared_ptr<Renderer> renderer = std::make_shared<PhongRenderer>();
+    engine.setRenderer(renderer);
 
 
-    Registry reg;
-    auto o = reg.createGameObject();
-    //o.lock()->addComponent<MeshComponent>(meshLoader.load("resources/models/bottle/bottle.glb"));
+    Entity ground = Entity(loadMesh("resources/scenes/Test01/Resources/island.glb"));
+    engine.addEntity(ground);
+
+
     engine.start();
     return 0;
 }
