@@ -455,4 +455,8 @@ namespace nebula {
     void Nebula::addEntity(Entity &entity) {
         entities.push_back(entity);
     }
+
+    const std::unique_ptr<Window> &Nebula::getWindow() const {
+        return window;
+    }
 } // nebula

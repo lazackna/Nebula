@@ -17,7 +17,7 @@ struct Light {
     float Quadratic;
     float Radius;
 };
-const int NR_LIGHTS = 32;
+const int NR_LIGHTS = 1;
 uniform Light lights[NR_LIGHTS];
 
 void main()

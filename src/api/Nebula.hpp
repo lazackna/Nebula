@@ -20,7 +20,7 @@
 #include "../graphics/FpsCam.hpp"
 #include "../graphics/rendering/Renderer.hpp"
 
-#define NR_LIGHTS 32
+#define NR_LIGHTS 1
 
 namespace nebula {
 
@@ -74,6 +74,8 @@ namespace nebula {
 
         void setRenderer(std::shared_ptr<Renderer> renderer);
         void addEntity(Entity& entity);
+
+        const std::unique_ptr<Window> &getWindow() const;
     };
 
 } // nebula

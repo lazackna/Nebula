@@ -13,8 +13,8 @@ namespace nebula {
     class Shader;
 
     class Entity {
-        std::shared_ptr<Mesh> mesh;
     public:
+        std::shared_ptr<Mesh> mesh;
         glm::mat4 model;
 
         explicit Entity(std::shared_ptr<Mesh> mesh);

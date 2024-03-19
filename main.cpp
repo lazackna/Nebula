@@ -16,8 +16,8 @@ int main() {
     NebulaOptions options(1280, 720, "Nebula");
     Nebula engine = Nebula(options);
 
-    //std::shared_ptr<Renderer> renderer = std::make_shared<DeferredRenderer>(options.width, options.height);
-    std::shared_ptr<Renderer> renderer = std::make_shared<PhongRenderer>();
+    std::shared_ptr<Renderer> renderer = std::make_shared<DeferredRenderer>(options.width, options.height,
+                                                                            engine.getWindow());
     engine.setRenderer(renderer);
 
 

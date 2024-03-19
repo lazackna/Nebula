@@ -16,9 +16,10 @@ out vec4 color;
 
 void main()
 {
-    position = (modelMatrix * vec4(a_position, 1.0f)).xyz;
-    normal = normalize(normalMatrix * a_normal);;
+    vec4 worldPos = modelMatrix * vec4(a_position, 1.0);
+    position = worldPos.xyz;
+    normal = a_normal * normalMatrix;
     texcoord = a_texcoord;
     color = a_color;
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(a_position,1);
+    gl_Position = projectionMatrix * viewMatrix * worldPos;
 }
