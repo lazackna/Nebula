@@ -20,7 +20,7 @@
 #include "../graphics/FpsCam.hpp"
 #include "../graphics/rendering/Renderer.hpp"
 
-#define NR_LIGHTS 1
+#define NR_LIGHTS 16
 
 namespace nebula {
 
@@ -47,7 +47,9 @@ namespace nebula {
         std::vector<Entity> entities;
         std::unique_ptr<FpsCam> camera;
 
-        std::shared_ptr<Renderer> renderer;
+        std::vector<std::shared_ptr<Renderer>> renderers;
+        std::shared_ptr<Renderer> currentRenderer;
+        int currentRendererIndex = 0;
     private:
         void initialize();
 
@@ -72,10 +74,13 @@ namespace nebula {
 
         static Nebula& getInstance();
 
-        void setRenderer(std::shared_ptr<Renderer> renderer);
+        //void setRenderer(std::shared_ptr<Renderer> renderer);
         void addEntity(Entity& entity);
 
-        const std::unique_ptr<Window> &getWindow() const;
+        void addRenderer(std::shared_ptr<Renderer> renderer);
+        void swapRenderer();
+
+        [[nodiscard]] const std::unique_ptr<Window> &getWindow() const;
     };
 
 } // nebula

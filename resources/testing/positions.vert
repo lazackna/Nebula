@@ -18,7 +18,7 @@ void main()
 {
     vec4 worldPos = modelMatrix * vec4(a_position, 1.0);
     position = worldPos.xyz;
-    normal = a_normal * normalMatrix;
+    normal = normalMatrix * a_normal;
     texcoord = a_texcoord;
     color = a_color;
     gl_Position = projectionMatrix * viewMatrix * worldPos;

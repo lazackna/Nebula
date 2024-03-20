@@ -208,6 +208,9 @@ namespace nebula {
             checkGLError(__FILE__, __LINE__);
 
             update(deltaTime);
+
+
+
             draw();
 
 //            rotate(model, glm::vec3(rotation, rotation, rotation));
@@ -280,6 +283,15 @@ namespace nebula {
     void Nebula::update(double deltaTime) {
         // input->update();
         camera->update(deltaTime);
+
+        static bool previousRendererKeyState = false;
+        int action = glfwGetKey(window->getWindow(), GLFW_KEY_KP_SUBTRACT);
+        if (action == GLFW_PRESS && !previousRendererKeyState) {
+            previousRendererKeyState = true;
+            swapRenderer();
+        } else if (action == GLFW_RELEASE) {
+            previousRendererKeyState = false;
+        }
     }
 
     void Nebula::draw() {
@@ -288,7 +300,7 @@ namespace nebula {
         glm::mat4 projection = createPerspective(glm::radians(45.0f),
                                                  static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]),
                                                  0.1f, 100.0f);
-        renderer->render(entities, *camera, projection);
+        currentRenderer->render(entities, *camera, projection);
     }
 
     void Nebula::renderQuad() {
@@ -448,9 +460,9 @@ namespace nebula {
         }
     }
 
-    void Nebula::setRenderer(std::shared_ptr<Renderer> renderer) {
-        this->renderer = std::move(renderer);
-    }
+//    void Nebula::setRenderer(std::shared_ptr<Renderer> renderer) {
+//        //this->renderer = std::move(renderer);
+//    }
 
     void Nebula::addEntity(Entity &entity) {
         entities.push_back(entity);
@@ -458,5 +470,21 @@ namespace nebula {
 
     const std::unique_ptr<Window> &Nebula::getWindow() const {
         return window;
+    }
+
+    void Nebula::addRenderer(std::shared_ptr<Renderer> renderer) {
+        renderers.push_back(renderer);
+        currentRenderer = renderer;
+        currentRendererIndex = renderers.size() - 1;
+    }
+
+    void Nebula::swapRenderer() {
+        if(currentRendererIndex + 1 >= renderers.size()) {
+            currentRendererIndex = 0;
+        } else {
+            currentRendererIndex++;
+        }
+
+        currentRenderer = renderers[currentRendererIndex];
     }
 } // nebula

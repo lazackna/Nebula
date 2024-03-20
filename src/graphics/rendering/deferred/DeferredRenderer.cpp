@@ -52,10 +52,12 @@ namespace nebula {
 //        simpleShader->setViewMatrix(camera.getMatrix());
 //        simpleShader->setProjectionMatrix(projection);
 
+        positionPass->clear();
         for (const auto &item: entities) {
             positionPass->render(camera, item.model, projection, *item.mesh);
         }
 
+        normalPass->clear();
         for (const auto &item: entities) {
             normalPass->render(camera, item.model, projection, *item.mesh);
         }
@@ -66,6 +68,8 @@ namespace nebula {
         colorShader->setUniform("specular", 1);
         specular.bind(1);
 
+
+        colorPass->clear();
         for (const auto &item: entities) {
             colorPass->render(camera, item.model, projection, *item.mesh);
         }
@@ -150,33 +154,37 @@ namespace nebula {
     std::vector<Light> DeferredRenderer::createLights() {
         std::vector<Light> lights;
 
-        Light light;
-        auto xPos = 0;
-        auto yPos = 2;
-        auto zPos = 0;
-        light.Position = glm::vec3(xPos, yPos, zPos);
+//        Light light;
+//        auto xPos = 5;
+//        auto yPos = 3;
+//        auto zPos = 0;
+//        light.Position = glm::vec3(xPos, yPos, zPos);
+//
+//        auto rColor = 0.5f;
+//        auto gColor = 0.3f;
+//        auto bColor = 0.01f;
+//        light.Color = glm::vec3(rColor, gColor, bColor);
+//        lights.push_back(light);
+        for (int i = 0; i < NR_LIGHTS; i++) {
+            Light light;
 
-        auto rColor = 0.5f;
-        auto gColor = 0.3f;
-        auto bColor = 0.01f;
-        light.Color = glm::vec3(rColor, gColor, bColor);
-        lights.push_back(light);
-//        for(int i = 0; i < NR_LIGHTS; i++) {
-//            Light light;
-//
-//            auto xPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateInt(0, 100)) / 100.0) * 6.0 - 3.0);
-//            auto yPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateInt(0, 100)) / 100.0) * 6.0 - 4.0);
-//            auto zPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateInt(0, 100)) / 100.0) * 6.0 - 3.0);
-//            light.Position = glm::vec3(xPos, yPos, zPos);
-//
-//            auto rColor = static_cast<float>(((rand() % 100) / 200.0f));// + 0.5); // between 0.5 and 1.)
-//            auto gColor = static_cast<float>(((rand() % 100) / 200.0f));// + 0.5); // between 0.5 and 1.)
-//            auto bColor = static_cast<float>(((rand() % 100) / 200.0f));// + 0.5); // between 0.5 and 1.)
-//            light.Color = glm::vec3(rColor, gColor, bColor);
-//
-//
-//            lights.push_back(light);
-//        }
+            auto xPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateDouble(-10, 10))));
+            auto yPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateDouble(2, 4))));
+            auto zPos = static_cast<float>(((RandomUtils::RandomUtils::GetInstance()->generateDouble(-10, 10))));
+            light.Position = glm::vec3(xPos, yPos, zPos);
+
+            auto rColor = static_cast<float>(((rand() % 100) / 200.0f)) + 0.2f;// + 0.5); // between 0.5 and 1.)
+            auto gColor = static_cast<float>(((rand() % 100) / 200.0f)) + 0.2f; // + 0.5); // between 0.5 and 1.)
+            auto bColor = static_cast<float>(((rand() % 100) / 200.0f)) + 0.2f;// + 0.5); // between 0.5 and 1.)
+
+//            auto rColor = static_cast<float>(RandomUtils::RandomUtils::GetInstance()->generateDouble(0.3, 0.7));
+//            auto gColor = static_cast<float>(RandomUtils::RandomUtils::GetInstance()->generateDouble(0.3, 0.7));
+//            auto bColor = static_cast<float>(RandomUtils::RandomUtils::GetInstance()->generateDouble(0.3, 0.7));
+            light.Color = glm::vec3(rColor, gColor, bColor);
+
+
+            lights.push_back(light);
+        }
 
         return lights;
     }

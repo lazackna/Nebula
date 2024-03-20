@@ -1,7 +1,7 @@
 //
 // Created by Jasper on 1/18/2024.
 //
-
+#pragma once
 #ifndef NEBULA_MAIN_MATH_HPP
 #define NEBULA_MAIN_MATH_HPP
 

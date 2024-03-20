@@ -52,13 +52,13 @@ void FpsCam::update(float deltatime)
     float factor = 4;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        position += (1.0f + (10)) * deltatime * front;
+        position += (1.0f + (4)) * deltatime * front;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        position -= (1.0f + (10)) * deltatime * front;
+        position -= (1.0f + (4)) * deltatime * front;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        position -= right * (1.0f + (10)) * deltatime;
+        position -= right * (1.0f + (4)) * deltatime;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        position += right * (1.0f + (10)) * deltatime;
+        position += right * (1.0f + (4)) * deltatime;
     if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
         position.y -= factor * deltatime;
     }

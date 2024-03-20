@@ -17,8 +17,8 @@ namespace nebula {
 
         fbo->bind();
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0., 0., 0., 0.f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//        glClearColor(0., 0., 0., 0.f);
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mesh.draw(shader);
 
         fbo->unbind();
@@ -26,5 +26,13 @@ namespace nebula {
 
     Texture &RenderingPass::getTexture() {
         return texture;
+    }
+
+    void RenderingPass::clear() {
+        fbo->bind();
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0., 0., 0., 0.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        fbo->unbind();
     }
 } // nebula

@@ -23,6 +23,7 @@ namespace nebula {
         [[nodiscard]] Texture& getTexture();
 
         void render(FpsCam& camera, const glm::mat4& model, const glm::mat4& projection, Mesh& mesh);
+        void clear();
     };
 
 } // nebula

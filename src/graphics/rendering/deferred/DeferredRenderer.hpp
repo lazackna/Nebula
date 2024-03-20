@@ -13,7 +13,7 @@
 #include "../../../ui/UISystem.hpp"
 
 #ifndef NR_LIGHTS
-#define NR_LIGHTS 1
+#define NR_LIGHTS 16
 #endif
 
 namespace nebula {
