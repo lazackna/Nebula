@@ -15,7 +15,7 @@ namespace nebula {
         shader->setProjectionMatrix(projection);
 
         glm::vec3 lightPos = glm::vec3(0,6,0);
-        glm::vec3 lightColor = glm::vec3(150.0f / 255.0f,200.0f / 255.0f,60.0f / 255.0f);
+        glm::vec3 lightColor = glm::vec3(1.0f / 255.0f,60.0f / 255.0f,60.0f / 255.0f);
 
         shader->setUniform("viewPos", camera.getPosition());
 

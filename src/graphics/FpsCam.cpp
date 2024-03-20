@@ -49,16 +49,18 @@ void FpsCam::update(float deltatime)
     if (this->pitch < -89.0f)
         this->pitch = -89.0f;
 
-    float factor = 4;
+    float factor = 2;
 
+    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        factor = 4;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        position += (1.0f + (4)) * deltatime * front;
+        position += (1.0f + (factor)) * deltatime * front;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        position -= (1.0f + (4)) * deltatime * front;
+        position -= (1.0f + (factor)) * deltatime * front;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        position -= right * (1.0f + (4)) * deltatime;
+        position -= right * (1.0f + (factor)) * deltatime;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        position += right * (1.0f + (4)) * deltatime;
+        position += right * (1.0f + (factor)) * deltatime;
     if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
         position.y -= factor * deltatime;
     }
